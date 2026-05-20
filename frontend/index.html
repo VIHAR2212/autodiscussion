@@ -1380,23 +1380,17 @@ Rules:
 
 After the script, add a line: "PHOTOS NEEDED: [comma-separated list of 8-10 photo search keywords for Pexels]"`;
 
-    const GROQ_API_KEY = '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'; // 🔑 Paste your Groq key here
+    const BACKEND = 'https://autodiscussion.onrender.com';
 
     try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      const response = await fetch(`${BACKEND}/script`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${GROQ_API_KEY}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          max_tokens: 1000,
-          temperature: 0.8,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: `Write a YouTube script about: "${topic}". ${notes ? 'Additional notes: ' + notes : ''}` }
-          ]
+          topic,
+          content_type: contentType,
+          market,
+          notes
         })
       });
 
@@ -1404,7 +1398,7 @@ After the script, add a line: "PHOTOS NEEDED: [comma-separated list of 8-10 phot
       clearInterval(progressInterval);
       progressFill.style.width = '100%';
 
-      const scriptText = data.choices[0].message.content;
+      const scriptText = data.script;
       const words = scriptText.split(' ').length;
       const minutes = Math.round(words / 130);
       const photos = (scriptText.match(/\n\n/g) || []).length + 6;
