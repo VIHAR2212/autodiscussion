@@ -1,0 +1,7 @@
+Drop your royalty-free background music MP3 here.
+Rename it to: bg_music.mp3
+
+Good sources (free):
+- https://pixabay.com/music (search "cinematic dark car")
+- https://freemusicarchive.org
+- https://incompetech.com

@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoReel — AI Car Videos, Generated.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e8262a;
+    --red-dark: #b01c1f;
+    --red-glow: rgba(232, 38, 42, 0.35);
+    --black: #080808;
+    --black2: #0f0f0f;
+    --black3: #161616;
+    --white: #f2f0eb;
+    --grey: #888;
+    --grey2: #333;
+    --yellow: #f5c518;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--red);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(232,38,42,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.15s ease;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 9990;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 48px;
+    background: linear-gradient(to bottom, rgba(8,8,8,0.95), transparent);
+    backdrop-filter: blur(2px);
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--white);
+  }
+  .logo span { color: var(--red); }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--grey);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+
+  .nav-cta {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: var(--red);
+    color: var(--white);
+    border: none;
+    padding: 10px 24px;
+    cursor: none;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+  .nav-cta:hover {
+    background: var(--red-dark);
+    box-shadow: 0 0 24px var(--red-glow);
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 48px 72px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 50%, rgba(232,38,42,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(232,38,42,0.05) 0%, transparent 60%);
+  }
+
+  /* Animated speed lines */
+  .speed-lines {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .speed-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(232,38,42,0.4), transparent);
+    animation: speedLine 3s linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes speedLine {
+    0% { transform: translateX(-100%); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateX(200%); opacity: 0; }
+  }
+
+  .hero-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 20px;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 12vw, 180px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    color: var(--white);
+    animation: fadeUp 0.8s ease 0.4s both;
+  }
+  .hero-title .outline {
+    -webkit-text-stroke: 1px rgba(242,240,235,0.2);
+    color: transparent;
+  }
+  .hero-title .red { color: var(--red); }
+
+  .hero-sub {
+    margin-top: 32px;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--grey);
+    max-width: 480px;
+    line-height: 1.6;
+    animation: fadeUp 0.8s ease 0.6s both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 40px;
+    animation: fadeUp 0.8s ease 0.8s both;
+  }
+
+  .btn-primary {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background: var(--red);
+    color: var(--white);
+    border: none;
+    padding: 16px 40px;
+    cursor: none;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .btn-primary:hover { box-shadow: 0 0 40px var(--red-glow); }
+  .btn-primary:hover::after { opacity: 1; }
+
+  .btn-secondary {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--grey);
+    border: 1px solid var(--grey2);
+    padding: 16px 40px;
+    cursor: none;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { color: var(--white); border-color: var(--grey); }
+
+  /* TICKER */
+  .ticker {
+    background: var(--red);
+    overflow: hidden;
+    padding: 10px 0;
+    white-space: nowrap;
+  }
+  .ticker-track {
+    display: inline-flex;
+    gap: 0;
+    animation: ticker 30s linear infinite;
+  }
+  .ticker-item {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 0 32px;
+    color: rgba(242,240,235,0.85);
+  }
+  .ticker-dot {
+    color: rgba(242,240,235,0.4);
+  }
+  @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  /* GENERATE SECTION */
+  .generate {
+    padding: 100px 48px;
+    background: var(--black2);
+    position: relative;
+  }
+
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--red);
+  }
+
+  .generate-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--grey2);
+  }
+
+  .gen-panel {
+    background: var(--black2);
+    padding: 48px;
+  }
+
+  .gen-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .gen-desc {
+    font-size: 14px;
+    color: var(--grey);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+
+  .input-group {
+    margin-bottom: 20px;
+  }
+
+  .input-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .input-field {
+    width: 100%;
+    background: var(--black3);
+    border: 1px solid var(--grey2);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .input-field:focus {
+    border-color: var(--red);
+    box-shadow: 0 0 0 2px var(--red-glow);
+  }
+  .input-field::placeholder { color: #444; }
+
+  textarea.input-field {
+    resize: none;
+    height: 100px;
+    line-height: 1.6;
+  }
+
+  .select-field {
+    width: 100%;
+    background: var(--black3);
+    border: 1px solid var(--grey2);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    padding: 14px 16px;
+    outline: none;
+    appearance: none;
+    cursor: none;
+    transition: border-color 0.2s;
+  }
+  .select-field:focus { border-color: var(--red); }
+
+  .select-wrapper {
+    position: relative;
+  }
+  .select-wrapper::after {
+    content: '▾';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--grey);
+    pointer-events: none;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 1px solid var(--grey2);
+    color: var(--grey);
+    cursor: none;
+    transition: all 0.2s;
+  }
+  .tag:hover, .tag.active {
+    border-color: var(--red);
+    color: var(--red);
+    background: rgba(232,38,42,0.06);
+  }
+
+  /* OUTPUT PANEL */
+  .output-panel {
+    background: var(--black3);
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+  }
+
+  .output-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--grey);
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--grey2);
+    transition: background 0.3s;
+  }
+  .status-dot.live {
+    background: #22c55e;
+    box-shadow: 0 0 8px rgba(34,197,94,0.5);
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .script-output {
+    flex: 1;
+    background: var(--black);
+    border: 1px solid var(--grey2);
+    padding: 24px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--grey);
+    min-height: 300px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .script-placeholder {
+    color: #333;
+    font-style: italic;
+  }
+
+  .script-content {
+    display: none;
+  }
+
+  .typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 16px;
+    background: var(--red);
+    margin-left: 2px;
+    animation: blink 0.7s step-end infinite;
+    vertical-align: middle;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  .output-meta {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    background: var(--grey2);
+  }
+  .meta-item {
+    background: var(--black2);
+    padding: 16px;
+    text-align: center;
+  }
+  .meta-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--red);
+    letter-spacing: 2px;
+  }
+  .meta-key {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-top: 2px;
+  }
+
+  /* HOW IT WORKS */
+  .how {
+    padding: 100px 48px;
+    background: var(--black);
+  }
+
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    margin-top: 64px;
+    position: relative;
+  }
+
+  .how-grid::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--grey2), var(--red), var(--grey2), transparent);
+  }
+
+  .step {
+    padding: 0 24px;
+    text-align: center;
+    position: relative;
+  }
+
+  .step-num {
+    width: 80px; height: 80px;
+    background: var(--black2);
+    border: 1px solid var(--grey2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--red);
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s;
+  }
+  .step:hover .step-num {
+    border-color: var(--red);
+    box-shadow: 0 0 24px var(--red-glow);
+  }
+
+  .step-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .step-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .step-desc {
+    font-size: 13px;
+    color: var(--grey);
+    line-height: 1.6;
+  }
+
+  /* CONTENT TYPES */
+  .content-types {
+    padding: 100px 48px;
+    background: var(--black2);
+  }
+
+  .types-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: var(--grey2);
+    margin-top: 64px;
+  }
+
+  .type-card {
+    background: var(--black2);
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    cursor: none;
+  }
+  .type-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--red);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .type-card:hover { background: var(--black3); }
+  .type-card:hover::before { transform: scaleX(1); }
+
+  .type-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    color: var(--grey2);
+    line-height: 1;
+    margin-bottom: 16px;
+    transition: color 0.3s;
+  }
+  .type-card:hover .type-num { color: var(--red); }
+
+  .type-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .type-desc {
+    font-size: 13px;
+    color: var(--grey);
+    line-height: 1.7;
+  }
+
+  .type-examples {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .type-example {
+    font-size: 12px;
+    color: #555;
+    font-style: italic;
+    padding-left: 12px;
+    border-left: 1px solid var(--grey2);
+    transition: color 0.3s, border-color 0.3s;
+  }
+  .type-card:hover .type-example {
+    color: var(--grey);
+    border-color: var(--red);
+  }
+
+  /* STATS */
+  .stats {
+    padding: 80px 48px;
+    background: var(--red);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+  .stat {
+    text-align: center;
+    padding: 40px 24px;
+  }
+  .stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    color: var(--white);
+    letter-spacing: 3px;
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(242,240,235,0.6);
+    margin-top: 8px;
+  }
+
+  /* MANUAL METHOD */
+  .manual {
+    padding: 100px 48px;
+    background: var(--black);
+  }
+
+  .manual-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    margin-top: 64px;
+    align-items: start;
+  }
+
+  .manual-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .manual-title span { color: var(--red); }
+
+  .manual-desc {
+    font-size: 15px;
+    color: var(--grey);
+    line-height: 1.8;
+    margin-bottom: 32px;
+  }
+
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .step-row {
+    display: flex;
+    gap: 0;
+    background: var(--grey2);
+  }
+  .step-row-num {
+    background: var(--red);
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .step-row-content {
+    background: var(--black2);
+    padding: 16px 20px;
+    flex: 1;
+  }
+  .step-row-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .step-row-desc {
+    font-size: 13px;
+    color: var(--grey);
+  }
+  .step-row-tool {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--red);
+    margin-top: 4px;
+  }
+
+  /* TOOL COMPARISON */
+  .tools-panel {
+    background: var(--black3);
+    border: 1px solid var(--grey2);
+    padding: 32px;
+  }
+  .tools-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 24px;
+  }
+  .tool-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--grey2);
+  }
+  .tool-item:last-child { border-bottom: none; }
+  .tool-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--white);
+  }
+  .tool-use {
+    font-size: 13px;
+    color: var(--grey);
+  }
+  .tool-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    background: rgba(232,38,42,0.1);
+    color: var(--red);
+    border: 1px solid rgba(232,38,42,0.3);
+  }
+  .tool-badge.free { background: rgba(34,197,94,0.1); color: #22c55e; border-color: rgba(34,197,94,0.3); }
+
+  /* FOOTER */
+  footer {
+    background: var(--black);
+    border-top: 1px solid var(--grey2);
+    padding: 40px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 3px;
+  }
+  .footer-logo span { color: var(--red); }
+  .footer-copy {
+    font-size: 13px;
+    color: var(--grey);
+    letter-spacing: 1px;
+  }
+  .footer-tagline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #333;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(32px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* LOADING STATE */
+  .generating {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .gen-line {
+    height: 14px;
+    background: var(--grey2);
+    border-radius: 2px;
+    animation: shimmer 1.5s ease infinite;
+  }
+  .gen-line:nth-child(2) { width: 85%; animation-delay: 0.1s; }
+  .gen-line:nth-child(3) { width: 92%; animation-delay: 0.2s; }
+  .gen-line:nth-child(4) { width: 78%; animation-delay: 0.3s; }
+  .gen-line:nth-child(5) { width: 88%; animation-delay: 0.4s; }
+  @keyframes shimmer {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    height: 2px;
+    background: var(--grey2);
+    margin-top: 16px;
+    display: none;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--red);
+    width: 0%;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 8px var(--red-glow);
+  }
+
+  /* Scroll animations */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Auto<span>Reel</span></div>
+  <ul class="nav-links">
+    <li><a href="#generate">Generate</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#content">Content Types</a></li>
+    <li><a href="#manual">Manual Method</a></li>
+  </ul>
+  <button class="nav-cta">Start Free</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="speed-lines" id="speedLines"></div>
+
+  <p class="hero-eyebrow">AI-Powered Car Content Studio</p>
+  <h1 class="hero-title">
+    GENERATE<br>
+    <span class="outline">VIRAL</span><br>
+    <span class="red">CAR VIDEOS</span>
+  </h1>
+  <p class="hero-sub">
+    Script. Voice. Photos. Assembled automatically.
+    Your faceless YouTube car channel — powered by AI, built to scale.
+  </p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="document.getElementById('generate').scrollIntoView({behavior:'smooth'})">Generate a Video</button>
+    <button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track" id="tickerTrack">
+    <span class="ticker-item">New Launches <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Car Comparisons <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Feature Deep Dives <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Industry News <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">EV Reviews <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Budget Cars India <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Luxury Rankings <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Top Speed Tests <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">New Launches <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Car Comparisons <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Feature Deep Dives <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Industry News <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">EV Reviews <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Budget Cars India <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Luxury Rankings <span class="ticker-dot">◆</span></span>
+    <span class="ticker-item">Top Speed Tests <span class="ticker-dot">◆</span></span>
+  </div>
+</div>
+
+<!-- GENERATE -->
+<section class="generate" id="generate">
+  <p class="section-label">Script Generator</p>
+
+  <div class="generate-grid">
+    <div class="gen-panel">
+      <h2 class="gen-title">BUILD YOUR VIDEO</h2>
+      <p class="gen-desc">Enter a topic, pick a content type, and let AI write your complete YouTube script — ready for voiceover.</p>
+
+      <div class="input-group">
+        <label class="input-label">Video Topic</label>
+        <input type="text" class="input-field" id="topicInput" placeholder="e.g. Tata Punch vs Maruti Fronx 2026">
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Content Type</label>
+        <div class="tags" id="contentTags">
+          <span class="tag active" data-type="comparison">Comparison</span>
+          <span class="tag" data-type="news">News</span>
+          <span class="tag" data-type="launch">New Launch</span>
+          <span class="tag" data-type="features">Features</span>
+          <span class="tag" data-type="ranking">Ranking</span>
+          <span class="tag" data-type="story">Brand Story</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Target Market</label>
+        <div class="select-wrapper">
+          <select class="select-field" id="marketSelect">
+            <option value="india">India (₹ Market)</option>
+            <option value="global">Global</option>
+            <option value="us">USA</option>
+            <option value="uk">UK</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Additional Notes (optional)</label>
+        <textarea class="input-field" id="notesInput" placeholder="Tone, specific points to cover, target audience..."></textarea>
+      </div>
+
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <button class="btn-primary" style="width:100%;margin-top:8px" id="generateBtn" onclick="generateScript()">
+        Generate Script →
+      </button>
+    </div>
+
+    <div class="output-panel">
+      <div class="output-header">
+        <div>
+          <h2 class="gen-title">SCRIPT OUTPUT</h2>
+          <p class="gen-desc" style="margin:0">Your AI-generated video script</p>
+        </div>
+        <div class="output-status">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Waiting</span>
+        </div>
+      </div>
+
+      <div class="script-output" id="scriptOutput">
+        <p class="script-placeholder" id="placeholder">Your script will appear here. Enter a topic and hit generate. →</p>
+        <div class="generating" id="loadingState">
+          <div class="gen-line"></div>
+          <div class="gen-line"></div>
+          <div class="gen-line"></div>
+          <div class="gen-line"></div>
+          <div class="gen-line"></div>
+        </div>
+        <div class="script-content" id="scriptContent"></div>
+      </div>
+
+      <div class="output-meta">
+        <div class="meta-item">
+          <div class="meta-val" id="wordCount">—</div>
+          <div class="meta-key">Words</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-val" id="duration">—</div>
+          <div class="meta-key">Est. Duration</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-val" id="photoCount">—</div>
+          <div class="meta-key">Photos Needed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <p class="section-label">Pipeline</p>
+  <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6vw,80px);letter-spacing:2px;" class="reveal">HOW AUTOREEL WORKS</h2>
+
+  <div class="how-grid reveal">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-icon">📝</div>
+      <div class="step-title">Script</div>
+      <div class="step-desc">AI writes a complete YouTube script in the viral tier/breakdown format</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-icon">🎙️</div>
+      <div class="step-title">Voiceover</div>
+      <div class="step-desc">ElevenLabs generates a cinematic narrator voice from your script</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-icon">🖼️</div>
+      <div class="step-title">Photos</div>
+      <div class="step-desc">Pexels + Wikimedia fetch HD photos matching each scene</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-icon">🎬</div>
+      <div class="step-title">Assemble</div>
+      <div class="step-desc">FFmpeg stitches photos with Ken Burns zoom + captions + music</div>
+    </div>
+    <div class="step">
+      <div class="step-num">05</div>
+      <div class="step-icon">🚀</div>
+      <div class="step-title">Export</div>
+      <div class="step-desc">Download your 1080p MP4 + thumbnail ready to upload</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT TYPES -->
+<section class="content-types" id="content">
+  <p class="section-label">Content Formats</p>
+  <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6vw,80px);letter-spacing:2px;" class="reveal">WHAT WE GENERATE</h2>
+
+  <div class="types-grid reveal">
+    <div class="type-card">
+      <div class="type-num">01</div>
+      <div class="type-title">Comparison</div>
+      <div class="type-desc">Head-to-head battles that keep viewers watching till the end</div>
+      <div class="type-examples">
+        <div class="type-example">"Tata Punch vs Fronx — Who Wins?"</div>
+        <div class="type-example">"BMW M3 vs Mercedes AMG C63"</div>
+        <div class="type-example">"Budget SUV Showdown 2026"</div>
+      </div>
+    </div>
+    <div class="type-card">
+      <div class="type-num">02</div>
+      <div class="type-title">New Launch</div>
+      <div class="type-desc">First-look breakdowns of every detail about upcoming cars</div>
+      <div class="type-examples">
+        <div class="type-example">"Tata Sierra 2026 — Everything We Know"</div>
+        <div class="type-example">"New Maruti Swift EV Revealed"</div>
+        <div class="type-example">"Tesla Model 2 India Launch"</div>
+      </div>
+    </div>
+    <div class="type-card">
+      <div class="type-num">03</div>
+      <div class="type-title">Rankings</div>
+      <div class="type-desc">Tier lists and rankings that drive insane engagement</div>
+      <div class="type-examples">
+        <div class="type-example">"Every SUV Under ₹15L Ranked"</div>
+        <div class="type-example">"Top 10 Most Reliable Cars Ever"</div>
+        <div class="type-example">"Best Cars For Indian Roads 2026"</div>
+      </div>
+    </div>
+    <div class="type-card">
+      <div class="type-num">04</div>
+      <div class="type-title">News & Stories</div>
+      <div class="type-desc">Industry news and brand stories with cinematic narration</div>
+      <div class="type-examples">
+        <div class="type-example">"Why Tata Motors Changed Everything"</div>
+        <div class="type-example">"The Rise and Fall of Ambassador"</div>
+        <div class="type-example">"How Maruti Conquered India"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-val">10X</div>
+    <div class="stat-label">Faster than manual</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">₹0</div>
+    <div class="stat-label">Cost on free tier</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">1080P</div>
+    <div class="stat-label">Output Quality</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">∞</div>
+    <div class="stat-label">Videos possible</div>
+  </div>
+</div>
+
+<!-- MANUAL METHOD -->
+<section class="manual" id="manual">
+  <p class="section-label">Backup Method</p>
+  <div class="manual-grid">
+    <div>
+      <h2 class="manual-title reveal">HUMAN +<br><span>AI</span><br>METHOD</h2>
+      <p class="manual-desc reveal">If the automation pipeline isn't ready, you can still produce the same quality videos manually using free tools. This is how most faceless channels started.</p>
+
+      <div class="steps-list reveal">
+        <div class="step-row">
+          <div class="step-row-num">1</div>
+          <div class="step-row-content">
+            <div class="step-row-label">Generate Script</div>
+            <div class="step-row-desc">Use AutoReel's script generator above</div>
+            <div class="step-row-tool">→ AutoReel / Claude / Groq</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-row-num">2</div>
+          <div class="step-row-content">
+            <div class="step-row-label">Create Voiceover</div>
+            <div class="step-row-desc">Paste script into ElevenLabs, download MP3</div>
+            <div class="step-row-tool">→ ElevenLabs (free tier)</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-row-num">3</div>
+          <div class="step-row-content">
+            <div class="step-row-label">Download Photos</div>
+            <div class="step-row-desc">Use AI-suggested keywords to find car photos</div>
+            <div class="step-row-tool">→ Pexels / Unsplash / Wikimedia</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-row-num">4</div>
+          <div class="step-row-content">
+            <div class="step-row-label">Edit in CapCut</div>
+            <div class="step-row-desc">Import voice + photos, apply zoom effect, auto-captions, add music</div>
+            <div class="step-row-tool">→ CapCut (free, 1-click captions)</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-row-num">5</div>
+          <div class="step-row-content">
+            <div class="step-row-label">Export & Upload</div>
+            <div class="step-row-desc">Export 1080p, upload to YouTube with AI-generated title + description</div>
+            <div class="step-row-tool">→ YouTube Studio</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="tools-panel">
+        <div class="tools-title">Free Tool Stack</div>
+        <div class="tool-item">
+          <div>
+            <div class="tool-name">Groq API</div>
+            <div class="tool-use">Script generation (llama-3.3-70b)</div>
+          </div>
+          <span class="tool-badge free">Free</span>
+        </div>
+        <div class="tool-item">
+          <div>
+            <div class="tool-name">ElevenLabs</div>
+            <div class="tool-use">AI voiceover generation</div>
+          </div>
+          <span class="tool-badge">10k chars/mo free</span>
+        </div>
+        <div class="tool-item">
+          <div>
+            <div class="tool-name">Pexels API</div>
+            <div class="tool-use">HD stock car photos</div>
+          </div>
+          <span class="tool-badge free">Free</span>
+        </div>
+        <div class="tool-item">
+          <div>
+            <div class="tool-name">Wikimedia</div>
+            <div class="tool-use">Specific car model photos</div>
+          </div>
+          <span class="tool-badge free">Free</span>
+        </div>
+        <div class="tool-item">
+          <div>
+            <div class="tool-name">FFmpeg</div>
+            <div class="tool-use">Ken Burns + video assembly</div>
+          </div>
+          <span class="tool-badge free">Free</span>
+        </div>
+        <div class="tool-item">
+          <div>
+            <div class="tool-name">CapCut</div>
+            <div class="tool-use">Manual editing + auto captions</div>
+          </div>
+          <span class="tool-badge free">Free</span>
+        </div>
+        <div class="tool-item">
+          <div>
+            <div class="tool-name">Whisper</div>
+            <div class="tool-use">SRT subtitle generation</div>
+          </div>
+          <span class="tool-badge free">Free</span>
+        </div>
+      </div>
+
+      <div style="margin-top:2px;background:var(--black3);border:1px solid var(--grey2);padding:24px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:12px;">Time Estimate</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--grey2);">
+          <div style="background:var(--black2);padding:16px;text-align:center">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--red)">2 MIN</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--grey)">Auto Pipeline</div>
+          </div>
+          <div style="background:var(--black2);padding:16px;text-align:center">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--grey)">45 MIN</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--grey)">Manual Method</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Auto<span>Reel</span></div>
+  <div class="footer-copy">Built for car content creators · India & Global</div>
+  <div class="footer-tagline">Topic in. Video out.</div>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cursor.style.left = mx - 6 + 'px';
+    cursor.style.top = my - 6 + 'px';
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx - 18 + 'px';
+    ring.style.top = ry - 18 + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+
+  // Speed lines
+  const sl = document.getElementById('speedLines');
+  for (let i = 0; i < 12; i++) {
+    const line = document.createElement('div');
+    line.className = 'speed-line';
+    line.style.cssText = `
+      top: ${10 + Math.random() * 80}%;
+      width: ${100 + Math.random() * 200}px;
+      animation-delay: ${Math.random() * 3}s;
+      animation-duration: ${2 + Math.random() * 2}s;
+      opacity: ${0.2 + Math.random() * 0.4};
+    `;
+    sl.appendChild(line);
+  }
+
+  // Tags
+  document.querySelectorAll('.tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+      tag.classList.add('active');
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Generate script via Claude API
+  async function generateScript() {
+    const topic = document.getElementById('topicInput').value.trim();
+    if (!topic) {
+      document.getElementById('topicInput').focus();
+      document.getElementById('topicInput').style.borderColor = '#e8262a';
+      setTimeout(() => document.getElementById('topicInput').style.borderColor = '#333', 2000);
+      return;
+    }
+
+    const activeTag = document.querySelector('.tag.active');
+    const contentType = activeTag ? activeTag.dataset.type : 'comparison';
+    const market = document.getElementById('marketSelect').value;
+    const notes = document.getElementById('notesInput').value;
+
+    const btn = document.getElementById('generateBtn');
+    btn.textContent = 'Generating...';
+    btn.disabled = true;
+
+    document.getElementById('placeholder').style.display = 'none';
+    document.getElementById('scriptContent').style.display = 'none';
+    document.getElementById('loadingState').style.display = 'flex';
+    document.getElementById('statusDot').className = 'status-dot live';
+    document.getElementById('statusText').textContent = 'Generating';
+
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    progressBar.style.display = 'block';
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+      progress = Math.min(progress + Math.random() * 8, 90);
+      progressFill.style.width = progress + '%';
+    }, 300);
+
+    const marketLabels = { india: 'Indian', global: 'global', us: 'American', uk: 'British' };
+
+    const systemPrompt = `You are a viral YouTube script writer for a faceless car channel. Write engaging scripts in this exact format:
+
+HOOK (15 seconds): A dramatic, curiosity-inducing opening line.
+INTRO: Brief setup of what the video covers.
+SECTION 1-4: Each section has a bold header + 2-3 paragraphs of narration. For comparisons use "Round 1", "Round 2" etc. For rankings use numbered tiers.
+CTA: End with "Which would you choose? Comment below. Subscribe for more car content."
+
+Rules:
+- Write as pure narration (no camera directions)
+- Each paragraph = one photo scene
+- Short punchy sentences. No filler.
+- Target ${marketLabels[market]} car market
+- Content type: ${contentType}
+- Total length: ~600-800 words
+
+After the script, add a line: "PHOTOS NEEDED: [comma-separated list of 8-10 photo search keywords for Pexels]"`;
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: systemPrompt,
+          messages: [{
+            role: 'user',
+            content: `Write a YouTube script about: "${topic}". ${notes ? 'Additional notes: ' + notes : ''}`
+          }]
+        })
+      });
+
+      const data = await response.json();
+      clearInterval(progressInterval);
+      progressFill.style.width = '100%';
+
+      const scriptText = data.content[0].text;
+      const words = scriptText.split(' ').length;
+      const minutes = Math.round(words / 130);
+      const photos = (scriptText.match(/\n\n/g) || []).length + 6;
+
+      document.getElementById('loadingState').style.display = 'none';
+      const scriptEl = document.getElementById('scriptContent');
+      scriptEl.style.display = 'block';
+
+      // Format the script nicely
+      const formatted = scriptText
+        .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#f2f0eb;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;font-size:15px;">$1</strong>')
+        .replace(/^(HOOK|INTRO|SECTION \d+|CTA|PHOTOS NEEDED):/gm, '<span style="color:#e8262a;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;display:block;margin-top:20px;margin-bottom:6px;">$1:</span>')
+        .replace(/\n\n/g, '</p><p style="margin-bottom:12px;color:#888;">')
+        .replace(/\n/g, '<br>');
+
+      scriptEl.innerHTML = `<p style="margin-bottom:12px;color:#888;">${formatted}</p><span class="typing-cursor"></span>`;
+
+      document.getElementById('wordCount').textContent = words;
+      document.getElementById('duration').textContent = minutes + 'M';
+      document.getElementById('photoCount').textContent = Math.min(photos, 12);
+      document.getElementById('statusText').textContent = 'Ready';
+      document.getElementById('statusDot').style.animation = 'none';
+      document.getElementById('statusDot').style.background = '#22c55e';
+
+      setTimeout(() => { progressBar.style.display = 'none'; }, 1000);
+
+    } catch (err) {
+      clearInterval(progressInterval);
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('scriptContent').style.display = 'block';
+      document.getElementById('scriptContent').innerHTML = '<span style="color:#e8262a">Error generating script. Please try again.</span>';
+      document.getElementById('statusText').textContent = 'Error';
+      document.getElementById('statusDot').className = 'status-dot';
+      document.getElementById('statusDot').style.background = '#e8262a';
+    }
+
+    btn.textContent = 'Generate Script →';
+    btn.disabled = false;
+  }
+
+  // Enter key on topic input
+  document.getElementById('topicInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') generateScript();
+  });
+</script>
+</body>
+</html>
