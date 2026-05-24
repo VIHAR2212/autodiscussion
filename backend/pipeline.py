@@ -326,11 +326,7 @@ def build_caption_filter(narration: str, duration: float) -> str:
         start = i * time_per_line
         end = start + time_per_line
 
-        # Escape special chars
-        safe = (line.replace("\", "\\")
-                    .replace("'", "")
-                    .replace(":", "\:")
-                    .replace("%", "\%"))
+        safe = line.replace("'", "").replace(":", ";").replace("%", "pct").replace("\\", "")
 
         drawtext_parts.append(
             f"drawtext=text='{safe}'"
