@@ -269,9 +269,9 @@ def get_transition_filter(transition: str, duration: float) -> str:
 
     elif t == "zoom_out":
         # Start zoomed in, pull back — dramatic reveal
-        return (f"zoompan=z='if(eq(on\,1)\,1.3\,max(zoom-0.0008\,1.0))':d={frames}:"
-                f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1920x1080:fps=25")
-
+        zout = "zoompan=z='if(eq(on,1),1.3,max(zoom-0.0008,1.0))':d=" + str(frames) + ":x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1920x1080:fps=25"
+        return zout
+                
     elif t == "pan_left":
         # Pan from right to left — comparison A to B
         return (f"zoompan=z='1.15':d={frames}:"
@@ -290,9 +290,9 @@ def get_transition_filter(transition: str, duration: float) -> str:
     elif t == "slow_zoom_out_in":
         # Zoom out then back in — verdict/emotional
         half = frames // 2
-        return (f"zoompan=z='if(lt(on\,{half})\,max(1.3-on*0.001\,1.05)\,min(1.05+on*0.0004\,1.2))':d={frames}:"
-                f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1920x1080:fps=25")
-
+        szoi = "zoompan=z='if(lt(on," + str(half) + "),max(1.3-on*0.001,1.05),min(1.05+on*0.0004,1.2))':d=" + str(frames) + ":x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1920x1080:fps=25"
+        return szoi
+               
     else:
         return (f"zoompan=z='min(zoom+0.0004,1.2)':d={frames}:"
                 f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1920x1080:fps=25")
