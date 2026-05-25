@@ -33,13 +33,13 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; j
 .nav-cta { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; background: var(--red); color: var(--white); border: none; padding: 9px 22px; cursor: none; transition: all 0.2s; }
 .nav-cta:hover { background: var(--red-dark); box-shadow: 0 0 20px var(--red-glow); }
 .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 48px; position: relative; overflow: hidden; }
-.hero-inner { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 40px; padding-bottom: 40px; padding-top: 80px; }
+.hero-inner { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 0; padding-bottom: 0; padding-top: 80px; min-height: 90vh; }
 .hero-left { display: flex; flex-direction: column; }
-.hero-right { position: relative; display: flex; align-items: center; justify-content: center; }
-.car-glow { position: absolute; width: 80%; height: 40%; bottom: 5%; left: 10%; background: radial-gradient(ellipse, rgba(220,38,38,0.25) 0%, transparent 70%); filter: blur(30px); pointer-events: none; animation: glowPulse 3s ease infinite; }
-@keyframes glowPulse { 0%, 100% { opacity: 0.6; transform: scaleX(1); } 50% { opacity: 1; transform: scaleX(1.1); } }
-.hero-car { width: 130%; max-width: 1000px; object-fit: contain; animation: carFloat 4s ease-in-out infinite; filter: drop-shadow(0 30px 80px rgba(220,38,38,0.25)); margin-left: -80px; }
-@keyframes carFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
+.hero-right { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; min-height: 500px; }
+.car-glow { position: absolute; width: 90%; height: 35%; bottom: 10%; left: 5%; background: radial-gradient(ellipse, rgba(220,38,38,0.3) 0%, transparent 70%); filter: blur(40px); pointer-events: none; animation: glowPulse 3s ease infinite; }
+@keyframes glowPulse { 0%, 100% { opacity: 0.6; transform: scaleX(1); } 50% { opacity: 1; transform: scaleX(1.15); } }
+.hero-car { width: 100%; height: 100%; max-width: none; object-fit: contain; animation: carFloat 4s ease-in-out infinite; filter: drop-shadow(0 30px 80px rgba(220,38,38,0.25)); }
+@keyframes carFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-14px); } }
 .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 65% 50%, rgba(220,38,38,0.07) 0%, transparent 70%); }
 .speed-lines { position: absolute; inset: 0; overflow: hidden; }
 .speed-line { position: absolute; height: 1px; background: linear-gradient(to right, transparent, rgba(220,38,38,0.3), transparent); animation: speedLine 3s linear infinite; opacity: 0; }
