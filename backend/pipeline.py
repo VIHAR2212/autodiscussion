@@ -17,8 +17,8 @@ OUTPUT_DIR     = Path("outputs")
 MUSIC_FILE     = Path("assets/bg_music.mp3")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-FFMPEG  = "ffmpeg"
-FFPROBE = "ffprobe"
+FFMPEG  = "/usr/bin/ffmpeg"
+FFPROBE = "/usr/bin/ffprobe"
 
 MARKET_LABELS = {
     "india":  "Indian (₹ prices, Indian brands like Tata, Maruti, Hyundai India)",
