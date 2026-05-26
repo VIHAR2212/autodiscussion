@@ -17,8 +17,8 @@ OUTPUT_DIR     = Path("outputs")
 MUSIC_FILE     = Path("assets/bg_music.mp3")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-FFMPEG  = "C:\\ffmpeg\\bin\\ffmpeg.exe"
-FFPROBE = "C:\\ffmpeg\\bin\\ffprobe.exe"
+FFMPEG  = "ffmpeg"
+FFPROBE = "ffprobe"
 
 MARKET_LABELS = {
     "india":  "Indian (₹ prices, Indian brands like Tata, Maruti, Hyundai India)",
