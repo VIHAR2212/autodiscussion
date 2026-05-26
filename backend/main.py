@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -5,6 +7,10 @@ import uuid
 import os
 import httpx
 from pipeline import run_pipeline
+
+# Debug — remove after confirming key loads
+_key = os.getenv("GROQ_API_KEY", "NOT FOUND")
+print(f"GROQ KEY CHECK: {_key[:10] if _key != 'NOT FOUND' else 'NOT FOUND'}")
 
 app = FastAPI(title="AutoDiscussion API")
 
