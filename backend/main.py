@@ -25,39 +25,49 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 # Store generated audio files temporarily
 audio_store = {}
 
-MARKET_LABELS = {
-    "india": "Indian (₹ prices, Indian brands like Tata, Maruti, Hyundai)",
-    "global": "global",
-    "us": "American (USD prices, US market)",
-    "uk": "British (GBP prices, UK market)",
+NICHE_CONTEXT = {
+    "automobiles": "cars, automotive industry, racing, car brands and technology",
+    "business": "startups, corporations, entrepreneurs, business strategies and failures",
+    "finance": "crypto, stocks, investing, financial scandals and success stories",
+    "technology": "tech companies, innovations, AI, gadgets and digital revolution",
+    "history": "historical events, empires, wars, forgotten stories and mysteries",
+    "science": "scientific discoveries, space, nature, experiments and breakthroughs",
+    "sports": "athletes, teams, tournaments, rivalries and sporting legends",
+    "truecrime": "crimes, heists, frauds, investigations and justice",
+    "entertainment": "movies, music, celebrities, pop culture and industry secrets",
+    "health": "fitness, medicine, mental health, nutrition and wellness",
+    "politics": "political events, leaders, elections and geopolitical stories",
+    "nature": "wildlife, environment, natural disasters and conservation",
 }
 
 HUMOR_EXAMPLES = """
-You write in a witty, entertaining style — like a knowledgeable friend who roasts cars.
-Think: Top Gear meets stand-up comedy.
+You write in a witty, entertaining style — like a knowledgeable friend who tells stories with humor.
+Think: MrBeast storytelling meets stand-up comedy meets documentary narration.
 
 ROAST style:
-- "The AC works great... said no one in summer ever"
-- "BMW owners have two hobbies — driving and visiting the service center"
-- "The resale value drops faster than your confidence after buying it"
-- "Built like a tank — unfortunately the tank in question is a toy one"
+- "They had one job. They managed to mess that up too."
+- "The plan was brilliant. The execution, not so much."
+- "Nobody saw it coming. Except everyone who was paying attention."
+- "It worked perfectly — until it absolutely didn't."
 
 RELATABLE style:
-- "The mileage is better than my life decisions"
-- "Ground clearance so low it scrapes speed bumps — and speed bumps are basically mountain ranges"
-- "Comparing these two is like choosing between two bad options — one is just slightly less bad"
+- "This is the kind of story your history teacher was too scared to tell you"
+- "Imagine losing a billion dollars and calling it a learning experience"
+- "The difference between genius and stupidity is that genius has limits"
+- "Sometimes the most obvious answer is the one everyone ignores"
 
 HOOK openers:
-- "You've been spending thousands on the wrong car and nobody told you"
-- "This car will either save your life or embarrass you — let's find out which"
-- "If cars could talk, this one would have a lot of complaints"
-- "Most people buy this car. Most people are wrong."
+- "Nobody talks about this, and that's exactly the problem"
+- "This story will change how you see everything"
+- "Most people believe the official version. They shouldn't."
+- "This happened 10 years ago. The world still hasn't recovered."
+- "You think you know this story. You don't."
 
-WORLDWIDE brands:
-- "Toyota reliability is a religion at this point — people pray to it"
-- "A Lamborghini on a speed bump is not a car — it's a prayer"
-- "Tesla owners will tell you about their Tesla within 30 seconds. Every time."
-- "Buying a Ferrari and living in a city with traffic is the world's most expensive joke"
+DRAMATIC reveals:
+- "And that's when everything went wrong"
+- "What happened next, nobody predicted"
+- "The truth was hiding in plain sight the entire time"
+- "One decision changed everything"
 """
 
 @app.get("/")
@@ -69,15 +79,15 @@ def root():
 async def generate(request: dict):
     topic        = request.get("topic", "")
     content_type = request.get("content_type", "story")
-    market       = request.get("market", "global")
     notes        = request.get("notes", "")
 
     if not topic:
         raise HTTPException(status_code=400, detail="Topic is required")
 
-    market_label = MARKET_LABELS.get(market, "global")
+    niche = request.get("niche", "automobiles")
+    niche_context = NICHE_CONTEXT.get(niche, "general topics")
 
-    system_prompt = f"""You are a viral YouTube script writer for a faceless car channel.
+    system_prompt = f"""You are a viral YouTube script writer for faceless channels covering any topic.
 {HUMOR_EXAMPLES}
 
 Return ONLY valid JSON, nothing else:
@@ -102,7 +112,7 @@ Return ONLY valid JSON, nothing else:
 
 Rules:
 - content_type: {content_type}
-- market: {market_label}
+- niche/topic area: {niche_context}
 - 15-18 scenes for 8-10 minute video
 - pause_after: true only for dramatic moments, shocking reveals
 - photo_keyword must match EXACTLY what is being discussed (engine scene → engine photo, wheel scene → wheel photo)
