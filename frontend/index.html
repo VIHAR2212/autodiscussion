@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AutoDiscussion — AI Car Video Studio</title>
+<title>AutoDiscussion — AI Content Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -190,9 +190,9 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
   <div class="speed-lines" id="speedLines"></div>
   <div class="hero-inner">
     <div class="hero-left">
-      <p class="hero-eye">AI Car Content Studio</p>
-      <h1 class="hero-title">EVERY CAR<br><span class="outline">HAS A</span><br><span class="red">STORY</span></h1>
-      <p class="hero-sub">Script. Voice. Photos. Video. Assembled in minutes. Your faceless YouTube car channel — powered by AI, built to scale.</p>
+      <p class="hero-eye">AI Universal Content Studio</p>
+      <h1 class="hero-title">EVERY TOPIC<br><span class="outline">HAS A</span><br><span class="red">STORY</span></h1>
+      <p class="hero-sub">Script. Voice. Keywords. Assembled in minutes. Your faceless YouTube channel on any topic — powered by AI, built to scale.</p>
       <div class="hero-actions">
         <button class="btn-primary" onclick="document.getElementById('studio').scrollIntoView({behavior:'smooth'})">Generate a Video</button>
         <button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>
@@ -207,18 +207,22 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
 
 <div class="ticker">
   <div class="ticker-track">
-    <span class="ticker-item">👻 Haunted Car Stories</span><span class="ticker-item">◆</span>
-    <span class="ticker-item">🏆 Brand Legends</span><span class="ticker-item">◆</span>
-    <span class="ticker-item">💀 True Crime</span><span class="ticker-item">◆</span>
-    <span class="ticker-item">⚔️ Comparisons</span><span class="ticker-item">◆</span>
-    <span class="ticker-item">🚀 New Launches</span><span class="ticker-item">◆</span>
-    <span class="ticker-item">🔥 Rankings</span><span class="ticker-item">◆</span>
-    <span class="ticker-item">👻 Haunted Car Stories</span><span class="ticker-item">◆</span>
-    <span class="ticker-item">🏆 Brand Legends</span><span class="ticker-item">◆</span>
-    <span class="ticker-item">💀 True Crime</span><span class="ticker-item">◆</span>
-    <span class="ticker-item">⚔️ Comparisons</span><span class="ticker-item">◆</span>
-    <span class="ticker-item">🚀 New Launches</span><span class="ticker-item">◆</span>
-    <span class="ticker-item">🔥 Rankings</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">🚗 Automobiles</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">💼 Business</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">👻 True Crime</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">📈 Finance</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">🏛️ History</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">🔬 Science</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">💻 Technology</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">⚽ Sports</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">🚗 Automobiles</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">💼 Business</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">👻 True Crime</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">📈 Finance</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">🏛️ History</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">🔬 Science</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">💻 Technology</span><span class="ticker-item">◆</span>
+    <span class="ticker-item">⚽ Sports</span><span class="ticker-item">◆</span>
   </div>
 </div>
 
@@ -227,84 +231,116 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
   <div class="studio-grid">
     <div class="input-panel">
       <h2 class="panel-title">BUILD YOUR VIDEO</h2>
-      <p class="panel-desc">Enter a topic, pick a format, and let AI generate your complete car video — script, voiceover, photos, and MP4.</p>
+      <p class="panel-desc">Enter any topic, pick your niche and content type, and let AI generate a complete YouTube script with voiceover and keywords.</p>
       <label class="input-label">Video Topic</label>
-      <input type="text" class="input-field" id="topicInput" placeholder="e.g. How Lamborghini Was Born From Revenge">
+      <input type="text" class="input-field" id="topicInput" placeholder="e.g. How Apple Almost Went Bankrupt, The Ferrari Story, Bitcoin History...">
       <label class="input-label">Content Type</label>
       <div class="tags" id="contentTags">
-        <span class="tag" data-type="comparison">Comparison</span>
-        <span class="tag" data-type="news">News</span>
-        <span class="tag" data-type="launch">New Launch</span>
-        <span class="tag" data-type="features">Features</span>
         <span class="tag active" data-type="story">Brand Story</span>
-        <span class="tag" data-type="ranking">Ranking</span>
-        <span class="tag" data-type="haunted">👻 Haunted</span>
+        <span class="tag" data-type="comparison">Comparison</span>
         <span class="tag" data-type="truecrime">True Crime</span>
+        <span class="tag" data-type="ranking">Ranking</span>
+        <span class="tag" data-type="news">News</span>
+        <span class="tag" data-type="history">History</span>
+        <span class="tag" data-type="conspiracy">Conspiracy</span>
+        <span class="tag" data-type="exposé">Exposé</span>
+        <span class="tag" data-type="haunted">👻 Haunted</span>
+        <span class="tag" data-type="biography">Biography</span>
       </div>
-      <label class="input-label">Target Market</label>
+      <label class="input-label">Niche / Topic Area</label>
       <div class="select-wrap">
         <select class="select-field" id="marketSelect">
-          <option value="global">Global</option>
-          <option value="india">India (₹ Market)</option>
-          <option value="us">USA</option>
-          <option value="uk">UK</option>
+          <option value="automobiles">🚗 Automobiles</option>
+          <option value="business">💼 Business & Startups</option>
+          <option value="finance">📈 Finance & Crypto</option>
+          <option value="technology">💻 Technology</option>
+          <option value="history">🏛️ History</option>
+          <option value="science">🔬 Science</option>
+          <option value="sports">⚽ Sports</option>
+          <option value="truecrime">🔪 True Crime</option>
+          <option value="entertainment">🎬 Entertainment</option>
+          <option value="health">❤️ Health & Fitness</option>
+          <option value="politics">🏛️ Politics</option>
+          <option value="nature">🌿 Nature & Wildlife</option>
         </select>
       </div>
-      <label class="input-label">Output Format</label>
+      <label class="input-label">Video Length</label>
       <div class="format-grid">
-        <button class="format-btn" data-format="long">YouTube Long</button>
-        <button class="format-btn active" data-format="both">Both</button>
-        <button class="format-btn" data-format="short">Shorts Only</button>
+        <button class="format-btn" data-format="short">5-7 Min</button>
+        <button class="format-btn active" data-format="both">8-10 Min</button>
+        <button class="format-btn" data-format="long">12-15 Min</button>
       </div>
       <label class="input-label">Additional Notes (optional)</label>
       <textarea class="input-field" id="notesInput" placeholder="Tone, specific points, target audience..."></textarea>
-      <button class="generate-btn" id="generateBtn" onclick="startGeneration()">Generate Full Video →</button>
+      <button class="generate-btn" id="generateBtn" onclick="startGeneration()">Generate Script + Audio →</button>
     </div>
 
     <div class="output-panel">
       <div class="output-header">
         <div>
-          <h2 class="panel-title">VIDEO OUTPUT</h2>
-          <p class="panel-desc" style="margin:0">Your AI-generated video</p>
+          <h2 class="panel-title">SCRIPT OUTPUT</h2>
+          <p class="panel-desc" style="margin:0">Script, audio and metadata</p>
         </div>
         <div class="status-badge">
           <div class="status-dot" id="statusDot"></div>
           <span id="statusText">Waiting</span>
         </div>
       </div>
-      <div class="progress-wrap" id="progressWrap">
-        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-        <div class="progress-msg" id="progressMsg">Starting pipeline...</div>
+
+      <div class="shimmer-lines" id="shimmerLines" style="display:none">
+        <div class="shimmer-line"></div>
+        <div class="shimmer-line"></div>
+        <div class="shimmer-line"></div>
+        <div class="shimmer-line"></div>
       </div>
-      <div class="script-box" id="scriptBox">
-        <p class="script-placeholder" id="placeholder">Your video script and output will appear here. Enter a topic and click Generate Full Video →</p>
-        <div class="shimmer-lines" id="shimmerLines">
-          <div class="shimmer-line"></div>
-          <div class="shimmer-line"></div>
-          <div class="shimmer-line"></div>
-          <div class="shimmer-line"></div>
+
+      <div id="outputContent" style="display:none;flex-direction:column;gap:12px;">
+
+        <!-- Title + Hook -->
+        <div style="background:var(--black);border:1px solid var(--grey2);padding:16px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:6px;">YouTube Title</div>
+          <div id="outTitle" style="font-size:14px;color:var(--white);font-weight:500;"></div>
         </div>
-        <div id="scriptContent" style="display:none"></div>
-      </div>
-      <div class="video-output" id="videoOutput">
-        <div class="video-card" id="longCard" style="display:none">
-          <div class="video-info">
-            <div class="video-label">YouTube Long Video</div>
-            <div class="video-title" id="longTitle">—</div>
-            <div class="video-meta">16:9 · 1080p · MP4</div>
+
+        <div style="background:var(--black);border:1px solid var(--grey2);padding:16px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:6px;">Hook (First 15 Seconds)</div>
+          <div id="outHook" style="font-size:13px;color:#aaa;line-height:1.6;font-style:italic;"></div>
+        </div>
+
+        <!-- Audio Download -->
+        <div style="background:var(--black);border:1px solid var(--red);padding:16px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:4px;">Voiceover Audio</div>
+            <div style="font-size:13px;color:var(--grey);">MP3 · en-US-GuyNeural · +15% speed</div>
           </div>
-          <a class="download-btn" id="longDownload" href="#" target="_blank">Download →</a>
+          <button class="download-btn" id="audioBtn" onclick="generateAudio()" style="cursor:none;">Generate Audio →</button>
         </div>
-        <div class="video-card" id="shortCard" style="display:none">
-          <div class="video-info">
-            <div class="video-label">Shorts / Reels</div>
-            <div class="video-title" id="shortTitle">—</div>
-            <div class="video-meta">9:16 · 1080p · MP4</div>
-          </div>
-          <a class="download-btn" id="shortDownload" href="#" target="_blank">Download →</a>
+
+        <!-- Full Script -->
+        <div style="background:var(--black);border:1px solid var(--grey2);padding:16px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:10px;">Full Script</div>
+          <div id="outScript" style="font-size:12px;color:#666;line-height:1.9;max-height:200px;overflow-y:auto;"></div>
         </div>
+
+        <!-- Photo Keywords -->
+        <div style="background:var(--black);border:1px solid var(--grey2);padding:16px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:10px;">Photo Keywords (Pexels)</div>
+          <div id="outKeywords" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        </div>
+
+        <!-- Tags -->
+        <div style="background:var(--black);border:1px solid var(--grey2);padding:16px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:10px;">YouTube Tags</div>
+          <div id="outTags" style="font-size:12px;color:#555;line-height:1.8;"></div>
+        </div>
+
       </div>
-      <div class="meta-row">
+
+      <div id="placeholder" style="background:var(--black);border:1px solid var(--grey2);padding:24px;color:#333;font-style:italic;font-size:13px;">
+        Your script and audio will appear here. Enter a topic and click Generate →
+      </div>
+
+      <div class="meta-row" style="margin-top:12px;">
         <div class="meta-item"><div class="meta-val" id="metaScenes">—</div><div class="meta-key">Scenes</div></div>
         <div class="meta-item"><div class="meta-val" id="metaDuration">—</div><div class="meta-key">Est. Duration</div></div>
         <div class="meta-item"><div class="meta-val" id="metaStatus">—</div><div class="meta-key">Status</div></div>
@@ -315,30 +351,30 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
 
 <section class="how" id="how">
   <p class="section-label">Pipeline</p>
-  <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,72px);letter-spacing:2px;" class="reveal">HOW AUTODISCUSSION WORKS</h2>
+  <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,72px);letter-spacing:2px;" class="reveal">HOW IT WORKS</h2>
   <div class="how-grid reveal">
-    <div class="step"><div class="step-num">01</div><div class="step-icon">✍️</div><div class="step-title">Script</div><div class="step-desc">Groq AI writes a viral script with witty observations and cinematic structure</div></div>
+    <div class="step"><div class="step-num">01</div><div class="step-icon">✍️</div><div class="step-title">Script</div><div class="step-desc">Groq AI writes a viral script with witty observations for any topic or niche</div></div>
     <div class="step"><div class="step-num">02</div><div class="step-icon">🎙️</div><div class="step-title">Voice</div><div class="step-desc">Edge TTS generates a smooth cinematic narrator voiceover for every scene</div></div>
-    <div class="step"><div class="step-num">03</div><div class="step-icon">🖼️</div><div class="step-title">Photos</div><div class="step-desc">Pexels fetches HD photos matched exactly to what's being discussed</div></div>
-    <div class="step"><div class="step-num">04</div><div class="step-icon">🎬</div><div class="step-title">Assemble</div><div class="step-desc">FFmpeg stitches cinematic transitions, captions, and background music</div></div>
-    <div class="step"><div class="step-num">05</div><div class="step-icon">🚀</div><div class="step-title">Export</div><div class="step-desc">Download 1080p MP4 for YouTube + 9:16 version for Shorts and Reels</div></div>
+    <div class="step"><div class="step-num">03</div><div class="step-icon">🖼️</div><div class="step-title">Photos</div><div class="step-desc">AI suggests precise image keywords matched to each scene topic</div></div>
+    <div class="step"><div class="step-num">04</div><div class="step-icon">🎬</div><div class="step-title">Assemble</div><div class="step-desc">You animate/edit using your preferred tool with the provided assets</div></div>
+    <div class="step"><div class="step-num">05</div><div class="step-icon">🚀</div><div class="step-title">Export</div><div class="step-desc">Upload your finished video to YouTube, Shorts, Instagram Reels and more</div></div>
   </div>
 </section>
 
 <section class="content-types" id="content">
   <p class="section-label">Content Formats</p>
-  <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,72px);letter-spacing:2px;" class="reveal">WHAT WE GENERATE</h2>
+  <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,72px);letter-spacing:2px;" class="reveal">CONTENT NICHES</h2>
   <div class="types-grid reveal">
-    <div class="type-card"><div class="type-num">01</div><div class="type-title">👻 Haunted</div><div class="type-desc">Horror narration about cursed cars and haunted highways</div><div class="type-examples"><div class="type-ex">"The Ghost Truck of NH44"</div><div class="type-ex">"The Cursed Ferrari 250 GTO"</div></div></div>
-    <div class="type-card"><div class="type-num">02</div><div class="type-title">🏆 Brand Legends</div><div class="type-desc">Rise and fall stories of iconic car brands</div><div class="type-examples"><div class="type-ex">"How Lamborghini Was Born From Revenge"</div><div class="type-ex">"Why Toyota Never Dies"</div></div></div>
-    <div class="type-card"><div class="type-num">03</div><div class="type-title">⚔️ Comparisons</div><div class="type-desc">Head-to-head battles with witty commentary</div><div class="type-examples"><div class="type-ex">"Supra MK4 vs BMW M4"</div><div class="type-ex">"Tata Punch vs Maruti Fronx"</div></div></div>
-    <div class="type-card"><div class="type-num">04</div><div class="type-title">💀 True Crime</div><div class="type-desc">Dark and dramatic car crime stories</div><div class="type-examples"><div class="type-ex">"The Getaway Car Never Found"</div><div class="type-ex">"The Ferrari Heist of Milan"</div></div></div>
+    <div class="type-card"><div class="type-num">01</div><div class="type-title">🚗 Automobiles</div><div class="type-desc">Car stories, comparisons, haunted highways and brand legends</div><div class="type-examples"><div class="type-ex">"How Lamborghini Was Born From Revenge"</div><div class="type-ex">"Supra MK4 vs BMW M4"</div></div></div>
+    <div class="type-card"><div class="type-num">02</div><div class="type-title">💼 Business</div><div class="type-desc">Rise and fall of companies, startup stories, billionaire secrets</div><div class="type-examples"><div class="type-ex">"How Apple Almost Went Bankrupt"</div><div class="type-ex">"The Rise and Fall of WeWork"</div></div></div>
+    <div class="type-card"><div class="type-num">03</div><div class="type-title">🔪 True Crime</div><div class="type-desc">Dark, dramatic crime stories from around the world</div><div class="type-examples"><div class="type-ex">"The Heist That Fooled Interpol"</div><div class="type-ex">"The Billion Dollar Fraud"</div></div></div>
+    <div class="type-card"><div class="type-num">04</div><div class="type-title">🏛️ History</div><div class="type-desc">Untold stories from history with cinematic narration</div><div class="type-examples"><div class="type-ex">"The Secret War Nobody Talks About"</div><div class="type-ex">"How Rome Really Fell"</div></div></div>
   </div>
 </section>
 
 <div class="stats">
   <div class="stat"><div class="stat-val">10X</div><div class="stat-label">Faster than manual</div></div>
-  <div class="stat"><div class="stat-val">₹0</div><div class="stat-label">Cost on free tier</div></div>
+  <div class="stat"><div class="stat-val">ANY</div><div class="stat-label">Any Niche Works</div></div>
   <div class="stat"><div class="stat-val">1080P</div><div class="stat-label">Output quality</div></div>
   <div class="stat"><div class="stat-val">∞</div><div class="stat-label">Videos possible</div></div>
 </div>
@@ -348,9 +384,9 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
   <div class="manual-grid">
     <div>
       <h2 class="manual-title reveal">HUMAN +<br><span>AI</span><br>METHOD</h2>
-      <p class="manual-desc reveal">If automation isn't available, produce the same quality videos manually using free tools.</p>
+      <p class="manual-desc reveal">Produce professional YouTube videos on any topic manually using free tools — the workflow stays the same regardless of niche.</p>
       <div class="steps-list reveal">
-        <div class="step-row"><div class="step-row-num">1</div><div class="step-row-content"><div class="step-row-label">Generate Script</div><div class="step-row-desc">Use the studio above</div><div class="step-row-tool">→ AutoDiscussion Studio</div></div></div>
+        <div class="step-row"><div class="step-row-num">1</div><div class="step-row-content"><div class="step-row-label">Generate Script</div><div class="step-row-desc">Use the studio above</div><div class="step-row-tool">→ AutoDiscussion Script Generator</div></div></div>
         <div class="step-row"><div class="step-row-num">2</div><div class="step-row-content"><div class="step-row-label">Create Voiceover</div><div class="step-row-desc">Paste script, download MP3</div><div class="step-row-tool">→ ElevenLabs (free tier)</div></div></div>
         <div class="step-row"><div class="step-row-num">3</div><div class="step-row-content"><div class="step-row-label">Download Photos</div><div class="step-row-desc">Use AI-suggested keywords</div><div class="step-row-tool">→ Pexels / Unsplash / Wikimedia</div></div></div>
         <div class="step-row"><div class="step-row-num">4</div><div class="step-row-content"><div class="step-row-label">Edit in CapCut</div><div class="step-row-desc">Zoom effect + auto captions + music</div><div class="step-row-tool">→ CapCut (free)</div></div></div>
@@ -362,7 +398,7 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
         <div class="tools-title">Free Tool Stack</div>
         <div class="tool-item"><div><div class="tool-name">Groq API</div><div class="tool-use">Script generation</div></div><span class="tool-badge">Free</span></div>
         <div class="tool-item"><div><div class="tool-name">Edge TTS</div><div class="tool-use">AI voiceover</div></div><span class="tool-badge">Free</span></div>
-        <div class="tool-item"><div><div class="tool-name">Pexels API</div><div class="tool-use">HD car photos</div></div><span class="tool-badge">Free</span></div>
+        <div class="tool-item"><div><div class="tool-name">Pexels API</div><div class="tool-use">HD photos for any topic</div></div><span class="tool-badge">Free</span></div>
         <div class="tool-item"><div><div class="tool-name">FFmpeg</div><div class="tool-use">Video assembly</div></div><span class="tool-badge">Free</span></div>
         <div class="tool-item"><div><div class="tool-name">CapCut</div><div class="tool-use">Manual editing</div></div><span class="tool-badge">Free</span></div>
       </div>
@@ -372,56 +408,14 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
 
 <footer>
   <div class="footer-logo">Auto<span>Discussion</span></div>
-  <div class="footer-copy">Built for car content creators · India & Global</div>
-  <div class="footer-tag">Every car has a story</div>
+  <div class="footer-copy">Built for content creators worldwide · Any Niche</div>
+  <div class="footer-tag">Every topic has a story</div>
 </footer>
 
 <script>
 const BACKEND = 'https://autodiscussion.onrender.com';
-let currentJobId = null;
-let pollInterval = null;
-let selectedFormat = 'both';
+let currentScript = '';
 
-// CURSOR
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-function animCursor() {
-  cursor.style.left = mx - 5 + 'px'; cursor.style.top = my - 5 + 'px';
-  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
-  ring.style.left = rx - 16 + 'px'; ring.style.top = ry - 16 + 'px';
-  requestAnimationFrame(animCursor);
-}
-animCursor();
-
-// SPEED LINES
-const sl = document.getElementById('speedLines');
-for (let i = 0; i < 10; i++) {
-  const l = document.createElement('div'); l.className = 'speed-line';
-  l.style.cssText = `top:${10+Math.random()*80}%;width:${100+Math.random()*200}px;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*2}s;`;
-  sl.appendChild(l);
-}
-
-// TAGS
-document.querySelectorAll('.tag').forEach(t => t.addEventListener('click', () => {
-  document.querySelectorAll('.tag').forEach(x => x.classList.remove('active'));
-  t.classList.add('active');
-}));
-
-// FORMAT
-document.querySelectorAll('.format-btn').forEach(b => b.addEventListener('click', () => {
-  document.querySelectorAll('.format-btn').forEach(x => x.classList.remove('active'));
-  b.classList.add('active'); selectedFormat = b.dataset.format;
-}));
-
-// SCROLL REVEAL
-const observer = new IntersectionObserver(entries => {
-  entries.forEach((e, i) => { if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80); });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(r => observer.observe(r));
-
-// GENERATION
 async function startGeneration() {
   const topic = document.getElementById('topicInput').value.trim();
   if (!topic) {
@@ -434,89 +428,87 @@ async function startGeneration() {
   const notes = document.getElementById('notesInput').value;
 
   const btn = document.getElementById('generateBtn');
-  btn.disabled = true; btn.textContent = 'Starting Pipeline...';
-  setStatus('live', 'Starting');
-  document.getElementById('progressWrap').style.display = 'block';
+  btn.disabled = true; btn.textContent = 'Generating Script...';
+  setStatus('live', 'Generating');
   document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('outputContent').style.display = 'none';
   document.getElementById('shimmerLines').style.display = 'flex';
-  document.getElementById('scriptContent').style.display = 'none';
-  document.getElementById('videoOutput').style.display = 'none';
-  document.getElementById('longCard').style.display = 'none';
-  document.getElementById('shortCard').style.display = 'none';
-  setProgress(5, 'Connecting to pipeline...');
 
   try {
     const res = await fetch(`${BACKEND}/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topic, content_type: contentType, market, notes, format: selectedFormat })
+      body: JSON.stringify({ topic, content_type: contentType, niche: market, notes })
     });
     const data = await res.json();
-    currentJobId = data.job_id;
-    pollInterval = setInterval(pollStatus, 4000);
+
+    if (data.detail) throw new Error(data.detail);
+
+    currentScript = data.full_script || '';
+
+    document.getElementById('shimmerLines').style.display = 'none';
+    document.getElementById('outputContent').style.display = 'flex';
+    document.getElementById('placeholder').style.display = 'none';
+
+    document.getElementById('outTitle').textContent = data.title || '';
+    document.getElementById('outHook').textContent = data.hook || '';
+    document.getElementById('outScript').textContent = data.full_script || '';
+
+    // Keywords
+    const kwDiv = document.getElementById('outKeywords');
+    kwDiv.innerHTML = '';
+    (data.photo_keywords || []).forEach(kw => {
+      if (!kw) return;
+      const span = document.createElement('span');
+      span.style.cssText = 'font-family:"Barlow Condensed",sans-serif;font-size:11px;letter-spacing:1px;padding:4px 10px;border:1px solid #2a2a2a;color:#555;';
+      span.textContent = kw;
+      kwDiv.appendChild(span);
+    });
+
+    // Tags
+    document.getElementById('outTags').textContent = (data.tags || []).join(' · ');
+
+    // Meta
+    document.getElementById('metaScenes').textContent = (data.scenes || []).length;
+    document.getElementById('metaDuration').textContent = Math.round((data.scenes || []).length * 0.5) + 'M';
+    document.getElementById('metaStatus').textContent = 'Ready';
+
+    setStatus('live', 'Ready');
+
   } catch (err) {
+    document.getElementById('shimmerLines').style.display = 'none';
+    document.getElementById('placeholder').style.display = 'block';
+    document.getElementById('placeholder').innerHTML = `<span style="color:var(--red)">Error: ${err.message}</span>`;
     setStatus('error', 'Error');
-    setProgress(0, 'Failed to connect — is backend running?');
-    btn.disabled = false; btn.textContent = 'Generate Full Video →';
+    document.getElementById('metaStatus').textContent = 'Error';
   }
+
+  btn.disabled = false;
+  btn.textContent = 'Generate Script + Audio →';
 }
 
-async function pollStatus() {
-  if (!currentJobId) return;
+async function generateAudio() {
+  if (!currentScript) return;
+  const btn = document.getElementById('audioBtn');
+  btn.textContent = 'Generating...';
+  btn.style.opacity = '0.6';
+
   try {
-    const res = await fetch(`${BACKEND}/status/${currentJobId}`);
+    const res = await fetch(`${BACKEND}/audio`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: currentScript })
+    });
     const data = await res.json();
-    setProgress(data.progress, data.message);
-    document.getElementById('generateBtn').textContent = `${data.progress}% — ${data.message}`;
-    if (data.status === 'running') { setStatus('live', 'Generating'); document.getElementById('metaStatus').textContent = data.progress + '%'; }
-    if (data.status === 'done') {
-      clearInterval(pollInterval);
-      setStatus('live', 'Ready');
-      document.getElementById('generateBtn').disabled = false;
-      document.getElementById('generateBtn').textContent = 'Generate Full Video →';
-      document.getElementById('metaStatus').textContent = 'Done';
-      const script = data.script;
-      if (script) {
-        document.getElementById('shimmerLines').style.display = 'none';
-        const sc = document.getElementById('scriptContent'); sc.style.display = 'block';
-        sc.innerHTML = `<div style="color:var(--red);font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px">${script.title || 'Script Generated'}</div><div style="color:#666;font-size:12px;line-height:1.8">${script.hook || ''}</div><div style="color:#444;font-size:11px;margin-top:10px">Tags: ${(script.tags||[]).join(', ')}</div>`;
-        document.getElementById('metaScenes').textContent = (script.scenes || []).length;
-        document.getElementById('metaDuration').textContent = Math.round((script.scenes || []).length * 0.6) + 'M';
-      }
-      document.getElementById('videoOutput').style.display = 'flex';
-      document.getElementById('videoOutput').style.flexDirection = 'column';
-      if (data.long_path) {
-        document.getElementById('longTitle').textContent = script?.title || 'Long Video';
-        document.getElementById('longDownload').href = `${BACKEND}/download/${currentJobId}/long`;
-        document.getElementById('longCard').style.display = 'flex';
-      }
-      if (data.short_path) {
-        document.getElementById('shortTitle').textContent = script?.title || 'Short Video';
-        document.getElementById('shortDownload').href = `${BACKEND}/download/${currentJobId}/short`;
-        document.getElementById('shortCard').style.display = 'flex';
-      }
+    if (data.audio_id) {
+      btn.textContent = 'Download MP3 →';
+      btn.style.opacity = '1';
+      btn.onclick = () => window.open(`${BACKEND}/audio/${data.audio_id}`, '_blank');
     }
-    if (data.status === 'error') {
-      clearInterval(pollInterval);
-      setStatus('error', 'Error');
-      document.getElementById('generateBtn').disabled = false;
-      document.getElementById('generateBtn').textContent = 'Generate Full Video →';
-      document.getElementById('shimmerLines').style.display = 'none';
-      document.getElementById('scriptContent').style.display = 'block';
-      document.getElementById('scriptContent').innerHTML = `<span style="color:var(--red)">Error: ${data.message}</span>`;
-      document.getElementById('metaStatus').textContent = 'Error';
-    }
-  } catch (err) { console.error('Poll error:', err); }
-}
-
-function setProgress(pct, msg) {
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressMsg').textContent = msg;
-}
-function setStatus(type, text) {
-  const dot = document.getElementById('statusDot');
-  dot.className = 'status-dot' + (type === 'live' ? ' live' : type === 'error' ? ' error' : '');
-  document.getElementById('statusText').textContent = text;
+  } catch (err) {
+    btn.textContent = 'Error — Try Again';
+    btn.style.opacity = '1';
+  }
 }
 document.getElementById('topicInput').addEventListener('keydown', e => { if (e.key === 'Enter') startGeneration(); });
 </script>
