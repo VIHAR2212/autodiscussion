@@ -147,12 +147,13 @@ Rules:
         response.raise_for_status()
         raw = response.json()["choices"][0]["message"]["content"]
 
-    # Parse — strip fences if model adds them
-    clean = re.sub(r"```json|```", "", raw).strip()
-    # Find outermost JSON object
+    # Parse — strip ALL markdown fences and leading/trailing noise
+    clean = re.sub(r"```(?:json)?", "", raw).strip()
+    # Find outermost JSON object (handles any prefix text)
     match = re.search(r'\{[\s\S]*\}', clean)
     if not match:
-        raise HTTPException(status_code=500, detail="Model returned invalid JSON")
+        print(f"RAW MODEL OUTPUT:\n{raw[:500]}")  # debug log
+        raise HTTPException(status_code=500, detail="Model returned invalid JSON — check Render logs")
     data = json.loads(match.group())
 
     # Validate + fix sentences
