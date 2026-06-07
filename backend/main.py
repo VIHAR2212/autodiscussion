@@ -90,71 +90,70 @@ async def generate(request: dict):
 
     niche_context = NICHE_CONTEXT.get(niche, "general topics")
 
-    system_prompt = f"""You are a viral YouTube script writer for faceless channels.
-{HUMOR_EXAMPLES}
-{SENTENCE_TYPE_GUIDE}
+    system_prompt = f"""You are a YouTube script writer. Return ONLY valid JSON. No markdown. No explanation. No extra text before or after the JSON object.
 
-Return ONLY valid JSON, nothing else. No markdown fences.
-
+The JSON must follow this exact structure:
 {{
-  "title": "YouTube video title (clickbait, under 60 chars)",
-  "description": "YouTube description (150 words, SEO optimized, includes CTA)",
+  "title": "Video title under 60 chars",
+  "description": "SEO YouTube description 150 words with CTA",
   "tags": ["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8","tag9","tag10"],
-  "hook": "First 15 seconds — dramatic + funny opening line that hooks viewers instantly",
-  "hook_alternatives": ["alternative hook 1", "alternative hook 2", "alternative hook 3"],
-  "short_hook": "15-word max punchy hook for Shorts/Reels",
+  "hook": "Dramatic opening line that hooks in first 15 seconds",
+  "hook_alternatives": ["alt hook 1","alt hook 2","alt hook 3"],
+  "short_hook": "Punchy hook under 15 words for Shorts/Reels",
   "sentences": [
-    {{"text": "Nobody saw this coming.", "type": "dramatic"}},
-    {{"text": "Well, except the accountants.", "type": "funny"}},
-    {{"text": "...", "type": "pause"}},
-    {{"text": "In 2008 the company had $4 billion in assets.", "type": "narration"}}
+    {{"text": "sentence text here", "type": "narration"}},
+    {{"text": "shocking reveal here", "type": "dramatic"}},
+    {{"text": "witty joke here", "type": "funny"}},
+    {{"text": "...", "type": "pause"}}
   ],
-  "photo_keywords": ["keyword1","keyword2","keyword3","keyword4","keyword5","keyword6","keyword7","keyword8","keyword9","keyword10"],
+  "photo_keywords": ["keyword1","keyword2","keyword3","keyword4","keyword5","keyword6","keyword7","keyword8"],
   "scenes": [
-    {{
-      "id": 1,
-      "narration": "Narration for this scene (2-3 sentences max)",
-      "photo_keyword": "Specific Pexels search term matching exactly what is discussed",
-      "pause_after": false
-    }}
+    {{"id": 1, "narration": "2-3 sentence scene narration", "photo_keyword": "pexels search term", "pause_after": false}}
   ]
 }}
 
-Rules:
-- content_type: {content_type}
-- niche: {niche_context}
-- sentences: 20-35 items; follow narration→dramatic/funny→pause rhythm
-- scenes: 15-18 for 8-10 minute video
-- photo_keywords: 8-12 specific Pexels search terms (top-level, from scenes)
-- pause_after: true only for dramatic moments
-- At least 1 funny/witty line per 3 scenes
-{f'- Extra notes: {notes}' if notes else ''}"""
+Topic area: {niche_context}
+Content type: {content_type}
+Style: 70% information, 30% wit. Every 3-4 narration sentences add 1 funny or dramatic line.
+sentences array: 20-30 items total. scenes array: 12-15 items.
+{f'Extra notes: {notes}' if notes else ''}
 
-    async with httpx.AsyncClient(timeout=90) as client:
+CRITICAL: Output must be parseable JSON. Start your response with {{ and end with }}."""
+
+    async with httpx.AsyncClient(timeout=120) as client:
         response = await client.post(
             "https://api.groq.com/openai/v1/chat/completions",
             headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"},
             json={
                 "model": "llama-3.3-70b-versatile",
                 "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user",   "content": f"Write a YouTube script about: {topic}"}
+                    {"role": "system", "content": "You are a JSON-only response API. Always respond with valid JSON starting with { and ending with }. Never add markdown, explanation, or any text outside the JSON."},
+                    {"role": "user",   "content": system_prompt + f"\n\nWrite a YouTube script about: {topic}"}
                 ],
-                "temperature": 0.9,
+                "temperature": 0.85,
                 "max_tokens": 4000,
             }
         )
         response.raise_for_status()
         raw = response.json()["choices"][0]["message"]["content"]
+        print(f"RAW GROQ OUTPUT (first 300 chars): {raw[:300]}")
 
     # Parse — strip ALL markdown fences and leading/trailing noise
     clean = re.sub(r"```(?:json)?", "", raw).strip()
     # Find outermost JSON object (handles any prefix text)
     match = re.search(r'\{[\s\S]*\}', clean)
     if not match:
-        print(f"RAW MODEL OUTPUT:\n{raw[:500]}")  # debug log
-        raise HTTPException(status_code=500, detail="Model returned invalid JSON — check Render logs")
-    data = json.loads(match.group())
+        print(f"PARSE FAIL — RAW:\n{raw[:800]}")
+        raise HTTPException(status_code=500, detail=f"Model returned non-JSON. Check Render logs.")
+    
+    json_str = match.group()
+    try:
+        data = json.loads(json_str)
+    except json.JSONDecodeError as e:
+        # Try to recover truncated JSON by closing open structures
+        print(f"JSON DECODE ERROR: {e}\nRaw snippet: {json_str[:400]}")
+        raise HTTPException(status_code=500, detail=f"JSON parse error: {str(e)[:100]}. Try generating again.")
+    data = json.loads(json_str)
 
     # Validate + fix sentences
     valid_types = {"narration", "dramatic", "funny", "pause"}
