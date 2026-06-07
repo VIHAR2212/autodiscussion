@@ -185,6 +185,126 @@ textarea.input-field { resize: none; height: 80px; line-height: 1.6; }
 .meta-val { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--red); letter-spacing: 2px; }
 .meta-key { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--grey); margin-top: 2px; }
 
+/* ── Audio Visualizer ── */
+.visualizer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 500;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  backdrop-filter: blur(8px);
+}
+.visualizer-overlay.active { display: flex; }
+.vis-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--grey);
+  margin-bottom: 32px;
+}
+.vis-title span { color: var(--red); }
+.vis-canvas-wrap {
+  position: relative;
+  width: min(680px, 90vw);
+  height: 180px;
+  margin-bottom: 40px;
+}
+#visCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.vis-bar { /* decorative frame lines */
+  position: absolute;
+  top: -1px; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--red), transparent);
+}
+.vis-bar.bottom { top: auto; bottom: -1px; }
+/* Player controls */
+.vis-controls {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  background: var(--black2);
+  border: 1px solid var(--grey2);
+  padding: 20px 36px;
+  width: min(520px, 90vw);
+}
+.vis-playpause {
+  width: 52px; height: 52px;
+  background: var(--red);
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.vis-playpause:hover { background: var(--red-dark); box-shadow: 0 0 20px var(--red-glow); }
+.vis-playpause svg { width: 20px; height: 20px; fill: white; }
+.vis-progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.vis-track-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vis-progress-bar {
+  height: 3px;
+  background: var(--grey2);
+  cursor: pointer;
+  position: relative;
+}
+.vis-progress-fill {
+  height: 100%;
+  background: var(--red);
+  width: 0%;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 6px var(--red-glow);
+}
+.vis-time {
+  font-family: 'Fira Mono', monospace;
+  font-size: 11px;
+  color: var(--grey);
+  display: flex;
+  justify-content: space-between;
+}
+.vis-close {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--grey2);
+  color: var(--grey);
+  padding: 8px 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.vis-close:hover { border-color: var(--red); color: var(--red); }
+.vis-dl {
+  margin-top: 16px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--grey);
+  text-decoration: none;
+  border-bottom: 1px solid var(--grey2);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.vis-dl:hover { color: var(--red); border-color: var(--red); }
+
 /* ── REST OF PAGE (unchanged) ── */
 .how { padding: 80px 48px; background: var(--black); }
 .how-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-top: 56px; position: relative; }
@@ -451,6 +571,34 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
   </div>
 </section>
 
+<!-- ── Audio Visualizer Overlay ── -->
+<div class="visualizer-overlay" id="visOverlay">
+  <div class="vis-title">Now Playing — <span>AutoDiscussion</span></div>
+  <div class="vis-canvas-wrap">
+    <div class="vis-bar"></div>
+    <canvas id="visCanvas"></canvas>
+    <div class="vis-bar bottom"></div>
+  </div>
+  <div class="vis-controls">
+    <button class="vis-playpause" id="visPlayPause" onclick="togglePlay()">
+      <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <div class="vis-progress-wrap">
+      <div class="vis-track-name" id="visTrackName">Loading...</div>
+      <div class="vis-progress-bar" id="visProgressBar" onclick="seekAudio(event)">
+        <div class="vis-progress-fill" id="visProgressFill"></div>
+      </div>
+      <div class="vis-time">
+        <span id="visTimeCur">0:00</span>
+        <span id="visTimeTot">0:00</span>
+      </div>
+    </div>
+    <button class="vis-close" onclick="closeVisualizer()">✕ Close</button>
+  </div>
+  <a id="visDlLink" href="#" download="autodiscussion.mp3" class="vis-dl">⬇ Download MP3</a>
+</div>
+
 <footer>
   <div class="footer-logo">Auto<span>Discussion</span></div>
   <div class="footer-copy">Built for content creators worldwide · Any Niche</div>
@@ -460,6 +608,8 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
 <script>
 const BACKEND = 'https://autodiscussion.onrender.com';
 let currentScript = '';
+let audioCtx = null, analyser = null, sourceNode = null, animFrame = null;
+let currentAudio = null, currentAudioUrl = null;
 
 // ── Cursor ──────────────────────────────────────────────────────────────────
 const cur = document.getElementById('cursor');
@@ -686,7 +836,9 @@ async function startGeneration() {
       body: JSON.stringify({ topic, content_type: contentType, niche: market, notes })
     });
     const data = await res.json();
+    console.log('API response:', data); // debug
     if (data.detail) throw new Error(data.detail);
+    if (!data.title && !data.sentences) throw new Error('Backend returned empty data — check Render logs');
 
     currentScript = data.script || '';
 
@@ -727,9 +879,15 @@ async function generateAudio() {
     const data = await res.json();
     if (data.audio_id) {
       const audioUrl = `${BACKEND}/audio/${data.audio_id}`;
-      document.getElementById('audioPlayerWrap').innerHTML = `
-        <audio class="audio-player" controls src="${audioUrl}"></audio>
-        <a href="${audioUrl}" download="autodiscussion.mp3" class="action-btn secondary" style="margin-top:8px;display:inline-block;">⬇ Download MP3</a>`;
+      currentAudioUrl = audioUrl;
+
+      // Replace button area with visualizer launch button
+      const wrap = document.getElementById('audioPlayerWrap');
+      wrap.innerHTML = `
+        <div style="display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;">
+          <button class="action-btn" onclick="openVisualizer('${audioUrl}')">▶ Play with Visualizer</button>
+          <a href="${audioUrl}" download="autodiscussion.mp3" class="action-btn secondary">⬇ Download MP3</a>
+        </div>`;
       btn.textContent = '✓ Audio Ready';
       btn.style.background = '#22c55e';
       btn.style.color = '#000';
@@ -738,6 +896,124 @@ async function generateAudio() {
     btn.textContent = 'Error — Retry';
     btn.disabled = false;
   }
+}
+
+// ── Visualizer ────────────────────────────────────────────────────────────────
+function openVisualizer(url) {
+  const overlay = document.getElementById('visOverlay');
+  overlay.classList.add('active');
+  document.getElementById('visTrackName').textContent = document.getElementById('topicInput').value || 'AutoDiscussion Audio';
+  document.getElementById('visDlLink').href = url;
+
+  // Create audio element
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  currentAudio = new Audio(url);
+  currentAudio.crossOrigin = 'anonymous';
+
+  // Setup Web Audio
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 128;
+  sourceNode = audioCtx.createMediaElementSource(currentAudio);
+  sourceNode.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  currentAudio.play();
+  setPauseIcon(true);
+
+  currentAudio.addEventListener('timeupdate', updateProgress);
+  currentAudio.addEventListener('loadedmetadata', () => {
+    document.getElementById('visTimeTot').textContent = fmtTime(currentAudio.duration);
+  });
+  currentAudio.addEventListener('ended', () => setPauseIcon(false));
+
+  drawVisualizer();
+}
+
+function closeVisualizer() {
+  document.getElementById('visOverlay').classList.remove('active');
+  if (currentAudio) { currentAudio.pause(); }
+  if (animFrame) cancelAnimationFrame(animFrame);
+}
+
+function togglePlay() {
+  if (!currentAudio) return;
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  if (currentAudio.paused) {
+    currentAudio.play();
+    setPauseIcon(true);
+    drawVisualizer();
+  } else {
+    currentAudio.pause();
+    setPauseIcon(false);
+    if (animFrame) cancelAnimationFrame(animFrame);
+  }
+}
+
+function setPauseIcon(playing) {
+  document.getElementById('playIcon').style.display  = playing ? 'none' : '';
+  document.getElementById('pauseIcon').style.display = playing ? '' : 'none';
+}
+
+function seekAudio(e) {
+  if (!currentAudio || !currentAudio.duration) return;
+  const bar = document.getElementById('visProgressBar');
+  const pct = e.offsetX / bar.offsetWidth;
+  currentAudio.currentTime = pct * currentAudio.duration;
+}
+
+function updateProgress() {
+  if (!currentAudio || !currentAudio.duration) return;
+  const pct = (currentAudio.currentTime / currentAudio.duration) * 100;
+  document.getElementById('visProgressFill').style.width = pct + '%';
+  document.getElementById('visTimeCur').textContent = fmtTime(currentAudio.currentTime);
+}
+
+function fmtTime(s) {
+  const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2,'0')}`;
+}
+
+function drawVisualizer() {
+  const canvas = document.getElementById('visCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth, H = canvas.offsetHeight;
+  canvas.width = W; canvas.height = H;
+
+  const bufLen = analyser.frequencyBinCount;
+  const dataArr = new Uint8Array(bufLen);
+
+  function draw() {
+    animFrame = requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(dataArr);
+
+    ctx.clearRect(0, 0, W, H);
+
+    const barW = (W / bufLen) * 2.2;
+    let x = 0;
+    for (let i = 0; i < bufLen; i++) {
+      const val = dataArr[i] / 255;
+      const barH = val * H * 0.85;
+      const alpha = 0.4 + val * 0.6;
+
+      // Gradient bar: red → darker
+      const grad = ctx.createLinearGradient(0, H - barH, 0, H);
+      grad.addColorStop(0, `rgba(220,38,38,${alpha})`);
+      grad.addColorStop(1, `rgba(120,10,10,${alpha * 0.5})`);
+
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, H - barH, barW - 1, barH);
+
+      // Glow top cap
+      if (val > 0.1) {
+        ctx.fillStyle = `rgba(255,80,80,${val * 0.8})`;
+        ctx.fillRect(x, H - barH - 2, barW - 1, 2);
+      }
+
+      x += barW + 1;
+    }
+  }
+  draw();
 }
 
 // Enter to generate
