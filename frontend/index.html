@@ -611,6 +611,16 @@ let currentScript = '';
 let audioCtx = null, analyser = null, sourceNode = null, animFrame = null;
 let currentAudio = null, currentAudioUrl = null;
 
+// Wake up Render on page load (free tier spins down after inactivity)
+(async () => {
+  try {
+    const res = await fetch(`${BACKEND}/`, { signal: AbortSignal.timeout(30000) });
+    if (res.ok) console.log('Backend awake ✓');
+  } catch(e) {
+    console.warn('Backend warming up...', e.message);
+  }
+})();
+
 // ── Cursor ──────────────────────────────────────────────────────────────────
 const cur = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
@@ -822,23 +832,25 @@ async function startGeneration() {
   const notes       = document.getElementById('notesInput').value;
 
   const btn = document.getElementById('generateBtn');
-  btn.disabled = true; btn.textContent = 'Generating Script...';
-  setStatus('live', 'Generating');
+  btn.disabled = true; btn.textContent = 'Warming up server...';
+  setStatus('live', 'Connecting');
   document.getElementById('placeholder').style.display = 'none';
   document.getElementById('outputContent').style.display = 'none';
   document.getElementById('shimmerLines').style.display = 'flex';
   currentScript = '';
 
   try {
+    btn.textContent = 'Generating Script...';
     const res = await fetch(`${BACKEND}/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topic, content_type: contentType, niche: market, notes })
+      body: JSON.stringify({ topic, content_type: contentType, niche: market, notes }),
+      signal: AbortSignal.timeout(120000) // 2 min timeout for cold starts
     });
     const data = await res.json();
     console.log('API response:', data); // debug
     if (data.detail) throw new Error(data.detail);
-    if (!data.title && !data.sentences) throw new Error('Backend returned empty data — check Render logs');
+    if (!data.title && !data.sentences) throw new Error('Server returned empty data. If this is your first request in a while, wait 30s and try again (Render cold start).');
 
     currentScript = data.script || '';
 
