@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AutoDiscussion — AI Content Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
   --red: #dc2626;
@@ -17,6 +17,14 @@
   --white: #f2f0eb;
   --grey: #777;
   --grey2: #2a2a2a;
+  /* Sentence type colors */
+  --c-narration: rgba(72,160,255,0.12);
+  --b-narration: #48a0ff;
+  --c-dramatic:  rgba(220,38,38,0.14);
+  --b-dramatic:  #dc2626;
+  --c-funny:     rgba(255,200,50,0.1);
+  --b-funny:     #ffc832;
+  --b-pause:     #2a2a2a;
 }
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -59,6 +67,8 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; j
 .ticker-track { display: inline-flex; animation: ticker 35s linear infinite; }
 .ticker-item { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; padding: 0 28px; color: rgba(242,240,235,0.8); }
 @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* ── STUDIO ── */
 .studio { padding: 80px 48px; background: var(--black2); }
 .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 5px; text-transform: uppercase; color: var(--red); margin-bottom: 48px; display: flex; align-items: center; gap: 12px; }
 .section-label::before { content: ''; width: 28px; height: 1px; background: var(--red); }
@@ -85,30 +95,97 @@ textarea.input-field { resize: none; height: 80px; line-height: 1.6; }
 .generate-btn { width: 100%; font-family: 'Barlow Condensed', sans-serif; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; background: var(--red); color: var(--white); border: none; padding: 16px; cursor: none; transition: all 0.2s; }
 .generate-btn:hover { box-shadow: 0 0 32px var(--red-glow); }
 .generate-btn:disabled { background: var(--grey2); color: var(--grey); cursor: not-allowed; box-shadow: none; }
-.output-panel { background: var(--black3); padding: 48px; display: flex; flex-direction: column; gap: 20px; }
+
+/* ── OUTPUT PANEL ── */
+.output-panel { background: var(--black3); padding: 48px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; max-height: 95vh; }
 .output-header { display: flex; justify-content: space-between; align-items: flex-start; }
 .status-badge { display: flex; align-items: center; gap: 8px; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--grey); }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--grey2); transition: all 0.3s; }
 .status-dot.live { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.5); animation: pulse 2s ease infinite; }
 .status-dot.error { background: var(--red); }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-.progress-wrap { display: none; }
-.progress-bar { height: 2px; background: var(--grey2); margin-bottom: 8px; }
-.progress-fill { height: 100%; background: var(--red); width: 0%; transition: width 0.5s ease; box-shadow: 0 0 8px var(--red-glow); }
-.progress-msg { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--grey); }
-.script-box { background: var(--black); border: 1px solid var(--grey2); padding: 20px; min-height: 200px; font-size: 13px; line-height: 1.8; color: var(--grey); flex: 1; overflow-y: auto; max-height: 280px; }
-.script-placeholder { color: #333; font-style: italic; }
-.video-output { display: none; flex-direction: column; gap: 12px; }
-.video-card { background: var(--black); border: 1px solid var(--grey2); padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-.video-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--red); margin-bottom: 4px; }
-.video-title { font-size: 14px; color: var(--white); font-weight: 400; }
-.video-meta { font-size: 12px; color: var(--grey); margin-top: 2px; }
-.download-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; background: var(--red); color: var(--white); border: none; padding: 10px 20px; cursor: none; transition: all 0.2s; text-decoration: none; display: inline-block; }
-.download-btn:hover { background: var(--red-dark); box-shadow: 0 0 16px var(--red-glow); }
-.meta-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; background: var(--grey2); }
+
+/* shimmer */
+.shimmer-lines { display: none; flex-direction: column; gap: 10px; }
+.shimmer-line { height: 12px; background: var(--grey2); border-radius: 2px; animation: shimmer 1.5s ease infinite; }
+.shimmer-line:nth-child(2) { width: 80%; animation-delay: 0.1s; }
+.shimmer-line:nth-child(3) { width: 90%; animation-delay: 0.2s; }
+.shimmer-line:nth-child(4) { width: 70%; animation-delay: 0.3s; }
+@keyframes shimmer { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.7; } }
+
+/* output blocks */
+.out-block { background: var(--black); border: 1px solid var(--grey2); padding: 16px; }
+.out-label { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--red); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.copy-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; background: var(--grey2); border: none; color: var(--grey); padding: 3px 8px; cursor: none; transition: all 0.15s; }
+.copy-btn:hover { background: var(--red); color: var(--white); }
+.copy-btn.copied { background: #22c55e; color: #000; }
+
+/* hook */
+.hook-text { font-size: 14px; color: var(--white); font-weight: 500; line-height: 1.6; margin-bottom: 10px; }
+.short-hook-wrap { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); padding: 10px 12px; margin-bottom: 10px; }
+.short-hook-label { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--red); margin-bottom: 4px; }
+.short-hook-text { font-family: 'Fira Mono', monospace; font-size: 12px; color: #aaa; }
+.hook-alts { display: flex; flex-direction: column; gap: 6px; }
+.hook-alt { font-size: 12px; color: #555; padding: 8px 10px; border: 1px solid var(--grey2); cursor: none; transition: all 0.2s; }
+.hook-alt:hover { color: var(--grey); border-color: var(--grey); }
+.hook-alt-num { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--red); margin-bottom: 3px; }
+
+/* audio */
+.audio-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.audio-info { font-size: 12px; color: var(--grey); }
+.audio-player { width: 100%; margin-top: 10px; accent-color: var(--red); }
+.action-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; background: var(--red); color: var(--white); border: none; padding: 10px 20px; cursor: none; transition: all 0.2s; text-decoration: none; display: inline-block; white-space: nowrap; }
+.action-btn:hover { background: var(--red-dark); box-shadow: 0 0 16px var(--red-glow); }
+.action-btn:disabled { background: var(--grey2); color: var(--grey); }
+.action-btn.secondary { background: transparent; border: 1px solid var(--grey2); color: var(--grey); }
+.action-btn.secondary:hover { border-color: var(--red); color: var(--red); box-shadow: none; }
+
+/* sentences / script */
+.script-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--grey); }
+.legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+.script-stats { display: flex; gap: 16px; margin-bottom: 14px; }
+.s-stat { text-align: center; }
+.s-stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--red); letter-spacing: 1px; line-height: 1; }
+.s-stat-key { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--grey); }
+.sentences-list { display: flex; flex-direction: column; gap: 6px; max-height: 380px; overflow-y: auto; padding-right: 4px; }
+.sent { display: flex; align-items: flex-start; gap: 10px; padding: 9px 11px; border-left: 2px solid transparent; }
+.sent.narration { background: var(--c-narration); border-left-color: var(--b-narration); }
+.sent.dramatic  { background: var(--c-dramatic);  border-left-color: var(--b-dramatic); }
+.sent.funny     { background: var(--c-funny);     border-left-color: var(--b-funny); }
+.sent.pause     { opacity: 0.4; border-left-color: var(--b-pause); }
+.sent-num { font-family: 'Fira Mono', monospace; font-size: 10px; color: var(--grey); min-width: 18px; margin-top: 3px; }
+.sent-badge { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 2px 6px; white-space: nowrap; margin-top: 2px; flex-shrink: 0; }
+.badge-narration { background: rgba(72,160,255,0.2);  color: #48a0ff; }
+.badge-dramatic  { background: rgba(220,38,38,0.2);   color: #dc2626; }
+.badge-funny     { background: rgba(255,200,50,0.2);  color: #ffc832; }
+.badge-pause     { background: var(--grey2);           color: var(--grey); }
+.sent-text { font-size: 12px; line-height: 1.7; color: #aaa; }
+.sent.funny .sent-text { font-style: italic; }
+.sent.dramatic .sent-text { color: var(--white); }
+
+/* BGM */
+.bgm-wrap { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.bgm-icon { font-size: 36px; }
+.bgm-name { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 1px; line-height: 1; }
+.bgm-mood { font-size: 12px; color: var(--grey); margin: 4px 0; }
+.bgm-bpm { font-family: 'Fira Mono', monospace; font-size: 11px; color: #48a0ff; }
+.bgm-vibe { font-size: 11px; color: var(--grey); margin-top: 4px; }
+
+/* keywords / tags */
+.kw-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+.kw-chip { font-family: 'Fira Mono', monospace; font-size: 11px; padding: 4px 10px; border: 1px solid var(--grey2); color: #555; transition: all 0.15s; cursor: none; }
+.kw-chip:hover { border-color: var(--red); color: var(--white); }
+.tag-chip { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 1px; padding: 4px 10px; border: 1px solid var(--grey2); color: #555; cursor: none; transition: all 0.15s; }
+.tag-chip:hover { border-color: var(--red); color: var(--red); }
+
+/* meta row */
+.meta-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--grey2); }
 .meta-item { background: var(--black2); padding: 14px; text-align: center; }
 .meta-val { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--red); letter-spacing: 2px; }
 .meta-key { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--grey); margin-top: 2px; }
+
+/* ── REST OF PAGE (unchanged) ── */
 .how { padding: 80px 48px; background: var(--black); }
 .how-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-top: 56px; position: relative; }
 .how-grid::before { content: ''; position: absolute; top: 38px; left: 10%; right: 10%; height: 1px; background: linear-gradient(to right, transparent, var(--grey2), var(--red), var(--grey2), transparent); }
@@ -131,7 +208,7 @@ textarea.input-field { resize: none; height: 80px; line-height: 1.6; }
 .type-examples { margin-top: 16px; display: flex; flex-direction: column; gap: 5px; }
 .type-ex { font-size: 11px; color: #444; font-style: italic; padding-left: 10px; border-left: 1px solid var(--grey2); transition: color 0.3s, border-color 0.3s; }
 .type-card:hover .type-ex { color: var(--grey); border-color: var(--red); }
-.stats { padding: 70px 48px; background: var(--red); display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+.stats-section { padding: 70px 48px; background: var(--red); display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
 .stat { text-align: center; padding: 36px 20px; }
 .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 64px; color: var(--white); letter-spacing: 3px; line-height: 1; }
 .stat-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(242,240,235,0.55); margin-top: 6px; }
@@ -161,12 +238,6 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
 .footer-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #2a2a2a; }
 .reveal { opacity: 0; transform: translateY(36px); transition: opacity 0.7s ease, transform 0.7s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
-.shimmer-lines { display: none; flex-direction: column; gap: 10px; }
-.shimmer-line { height: 12px; background: var(--grey2); border-radius: 2px; animation: shimmer 1.5s ease infinite; }
-.shimmer-line:nth-child(2) { width: 80%; animation-delay: 0.1s; }
-.shimmer-line:nth-child(3) { width: 90%; animation-delay: 0.2s; }
-.shimmer-line:nth-child(4) { width: 70%; animation-delay: 0.3s; }
-@keyframes shimmer { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.7; } }
 </style>
 </head>
 <body>
@@ -200,7 +271,7 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
     </div>
     <div class="hero-right">
       <div class="car-glow"></div>
-      <img src="https://raw.githubusercontent.com/VIHAR2212/autodiscussion/main/assets/mercedes.png" alt="Nissan GT-R" class="hero-car">
+      <img src="https://raw.githubusercontent.com/VIHAR2212/autodiscussion/main/assets/mercedes.png" alt="Mercedes" class="hero-car">
     </div>
   </div>
 </section>
@@ -229,11 +300,15 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
 <section class="studio" id="studio">
   <p class="section-label">AI Video Studio</p>
   <div class="studio-grid">
+
+    <!-- INPUT -->
     <div class="input-panel">
       <h2 class="panel-title">BUILD YOUR VIDEO</h2>
       <p class="panel-desc">Enter any topic, pick your niche and content type, and let AI generate a complete YouTube script with voiceover and keywords.</p>
+
       <label class="input-label">Video Topic</label>
       <input type="text" class="input-field" id="topicInput" placeholder="e.g. How Apple Almost Went Bankrupt, The Ferrari Story, Bitcoin History...">
+
       <label class="input-label">Content Type</label>
       <div class="tags" id="contentTags">
         <span class="tag active" data-type="story">Brand Story</span>
@@ -247,6 +322,7 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
         <span class="tag" data-type="haunted">👻 Haunted</span>
         <span class="tag" data-type="biography">Biography</span>
       </div>
+
       <label class="input-label">Niche / Topic Area</label>
       <div class="select-wrap">
         <select class="select-field" id="marketSelect">
@@ -264,22 +340,26 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
           <option value="nature">🌿 Nature & Wildlife</option>
         </select>
       </div>
+
       <label class="input-label">Video Length</label>
       <div class="format-grid">
         <button class="format-btn" data-format="short">5-7 Min</button>
         <button class="format-btn active" data-format="both">8-10 Min</button>
         <button class="format-btn" data-format="long">12-15 Min</button>
       </div>
+
       <label class="input-label">Additional Notes (optional)</label>
       <textarea class="input-field" id="notesInput" placeholder="Tone, specific points, target audience..."></textarea>
+
       <button class="generate-btn" id="generateBtn" onclick="startGeneration()">Generate Script + Audio →</button>
     </div>
 
-    <div class="output-panel">
+    <!-- OUTPUT -->
+    <div class="output-panel" id="outputPanel">
       <div class="output-header">
         <div>
           <h2 class="panel-title">SCRIPT OUTPUT</h2>
-          <p class="panel-desc" style="margin:0">Script, audio and metadata</p>
+          <p class="panel-desc" style="margin:0">Script · Audio · Metadata · BGM</p>
         </div>
         <div class="status-badge">
           <div class="status-dot" id="statusDot"></div>
@@ -287,65 +367,30 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
         </div>
       </div>
 
-      <div class="shimmer-lines" id="shimmerLines" style="display:none">
+      <div class="shimmer-lines" id="shimmerLines">
         <div class="shimmer-line"></div>
         <div class="shimmer-line"></div>
         <div class="shimmer-line"></div>
         <div class="shimmer-line"></div>
       </div>
 
-      <div id="outputContent" style="display:none;flex-direction:column;gap:12px;">
-
-        <!-- Title + Hook -->
-        <div style="background:var(--black);border:1px solid var(--grey2);padding:16px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:6px;">YouTube Title</div>
-          <div id="outTitle" style="font-size:14px;color:var(--white);font-weight:500;"></div>
-        </div>
-
-        <div style="background:var(--black);border:1px solid var(--grey2);padding:16px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:6px;">Hook (First 15 Seconds)</div>
-          <div id="outHook" style="font-size:13px;color:#aaa;line-height:1.6;font-style:italic;"></div>
-        </div>
-
-        <!-- Audio Download -->
-        <div style="background:var(--black);border:1px solid var(--red);padding:16px;display:flex;justify-content:space-between;align-items:center;">
-          <div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:4px;">Voiceover Audio</div>
-            <div style="font-size:13px;color:var(--grey);">MP3 · en-US-GuyNeural · +15% speed</div>
-          </div>
-          <button class="download-btn" id="audioBtn" onclick="generateAudio()" style="cursor:none;">Generate Audio →</button>
-        </div>
-
-        <!-- Full Script -->
-        <div style="background:var(--black);border:1px solid var(--grey2);padding:16px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:10px;">Full Script</div>
-          <div id="outScript" style="font-size:12px;color:#666;line-height:1.9;max-height:200px;overflow-y:auto;"></div>
-        </div>
-
-        <!-- Photo Keywords -->
-        <div style="background:var(--black);border:1px solid var(--grey2);padding:16px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:10px;">Photo Keywords (Pexels)</div>
-          <div id="outKeywords" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-        </div>
-
-        <!-- Tags -->
-        <div style="background:var(--black);border:1px solid var(--grey2);padding:16px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:10px;">YouTube Tags</div>
-          <div id="outTags" style="font-size:12px;color:#555;line-height:1.8;"></div>
-        </div>
-
-      </div>
-
-      <div id="placeholder" style="background:var(--black);border:1px solid var(--grey2);padding:24px;color:#333;font-style:italic;font-size:13px;">
+      <!-- placeholder -->
+      <div id="placeholder" class="out-block" style="color:#333;font-style:italic;font-size:13px;">
         Your script and audio will appear here. Enter a topic and click Generate →
       </div>
 
-      <div class="meta-row" style="margin-top:12px;">
+      <!-- dynamic output -->
+      <div id="outputContent" style="display:none;flex-direction:column;gap:12px;"></div>
+
+      <!-- meta row always shown -->
+      <div class="meta-row">
         <div class="meta-item"><div class="meta-val" id="metaScenes">—</div><div class="meta-key">Scenes</div></div>
-        <div class="meta-item"><div class="meta-val" id="metaDuration">—</div><div class="meta-key">Est. Duration</div></div>
+        <div class="meta-item"><div class="meta-val" id="metaDuration">—</div><div class="meta-key">Duration</div></div>
+        <div class="meta-item"><div class="meta-val" id="metaSentences">—</div><div class="meta-key">Sentences</div></div>
         <div class="meta-item"><div class="meta-val" id="metaStatus">—</div><div class="meta-key">Status</div></div>
       </div>
     </div>
+
   </div>
 </section>
 
@@ -372,7 +417,7 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
   </div>
 </section>
 
-<div class="stats">
+<div class="stats-section">
   <div class="stat"><div class="stat-val">10X</div><div class="stat-label">Faster than manual</div></div>
   <div class="stat"><div class="stat-val">ANY</div><div class="stat-label">Any Niche Works</div></div>
   <div class="stat"><div class="stat-val">1080P</div><div class="stat-label">Output quality</div></div>
@@ -416,6 +461,205 @@ footer { background: var(--black); border-top: 1px solid var(--grey2); padding: 
 const BACKEND = 'https://autodiscussion.onrender.com';
 let currentScript = '';
 
+// ── Cursor ──────────────────────────────────────────────────────────────────
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX - 5 + 'px';
+  cur.style.top  = e.clientY - 5 + 'px';
+  ring.style.left = e.clientX - 16 + 'px';
+  ring.style.top  = e.clientY - 16 + 'px';
+});
+
+// ── Speed lines ──────────────────────────────────────────────────────────────
+const sl = document.getElementById('speedLines');
+for (let i = 0; i < 6; i++) {
+  const l = document.createElement('div');
+  l.className = 'speed-line';
+  l.style.cssText = `top:${15+i*14}%;width:${30+Math.random()*40}%;animation-delay:${i*0.5}s;animation-duration:${2.5+Math.random()}s`;
+  sl.appendChild(l);
+}
+
+// ── Content type tags ────────────────────────────────────────────────────────
+document.querySelectorAll('#contentTags .tag').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('#contentTags .tag').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+
+// ── Format buttons ───────────────────────────────────────────────────────────
+document.querySelectorAll('.format-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.format-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+  });
+});
+
+// ── Reveal on scroll ─────────────────────────────────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function setStatus(type, text) {
+  document.getElementById('statusDot').className = 'status-dot' + (type ? ' ' + type : '');
+  document.getElementById('statusText').textContent = text;
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const prev = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = prev; btn.classList.remove('copied'); }, 1600);
+  });
+}
+
+// ── Sentence renderer ────────────────────────────────────────────────────────
+const TYPE_CFG = {
+  narration: { badge: 'NARRATION', bc: 'badge-narration', dot: '#48a0ff' },
+  dramatic:  { badge: 'DRAMATIC',  bc: 'badge-dramatic',  dot: '#dc2626' },
+  funny:     { badge: 'FUNNY',     bc: 'badge-funny',     dot: '#ffc832' },
+  pause:     { badge: 'PAUSE',     bc: 'badge-pause',     dot: '#2a2a2a' },
+};
+
+function renderSentences(sentences) {
+  const counts = { narration: 0, dramatic: 0, funny: 0, pause: 0 };
+  sentences.forEach(s => { if (s.type in counts) counts[s.type]++; });
+
+  const statsHtml = `<div class="script-stats">
+    ${Object.entries(counts).map(([k,v]) => `<div class="s-stat"><div class="s-stat-val">${v}</div><div class="s-stat-key">${k}</div></div>`).join('')}
+  </div>`;
+
+  const legendHtml = `<div class="script-legend">
+    ${Object.entries(TYPE_CFG).map(([k,v]) => `<div class="legend-item"><div class="legend-dot" style="background:${v.dot}"></div>${v.badge}</div>`).join('')}
+  </div>`;
+
+  const listHtml = sentences.map((s, i) => {
+    const cfg = TYPE_CFG[s.type] || TYPE_CFG.narration;
+    return `<div class="sent ${s.type}">
+      <span class="sent-num">${i+1}</span>
+      <span class="sent-badge ${cfg.bc}">${cfg.badge}</span>
+      <span class="sent-text">${esc(s.text)}</span>
+    </div>`;
+  }).join('');
+
+  return statsHtml + legendHtml + `<div class="sentences-list">${listHtml}</div>`;
+}
+
+// ── Render full output ───────────────────────────────────────────────────────
+function renderOutput(data) {
+  const oc = document.getElementById('outputContent');
+  oc.innerHTML = '';
+  oc.style.display = 'flex';
+
+  // 1. Title
+  const titleBlock = document.createElement('div');
+  titleBlock.className = 'out-block';
+  titleBlock.innerHTML = `
+    <div class="out-label">YouTube Title
+      <button class="copy-btn" onclick="copyText(${JSON.stringify(data.title)}, this)">Copy</button>
+    </div>
+    <div style="font-size:15px;color:var(--white);font-weight:500;">${esc(data.title)}</div>`;
+  oc.appendChild(titleBlock);
+
+  // 2. Hook + Short Hook + Alternatives
+  const hookBlock = document.createElement('div');
+  hookBlock.className = 'out-block';
+  const altHtml = (data.hook_alternatives||[]).map((h,i) =>
+    `<div class="hook-alt"><div class="hook-alt-num">Alt ${i+1}</div>${esc(h)}</div>`).join('');
+  hookBlock.innerHTML = `
+    <div class="out-label">Hook (First 15 Seconds)
+      <button class="copy-btn" onclick="copyText(${JSON.stringify(data.hook)}, this)">Copy</button>
+    </div>
+    <div class="hook-text">${esc(data.hook)}</div>
+    ${data.short_hook ? `<div class="short-hook-wrap"><div class="short-hook-label">📱 Shorts / Reels</div><div class="short-hook-text">${esc(data.short_hook)}</div></div>` : ''}
+    ${altHtml ? `<div class="hook-alts">${altHtml}</div>` : ''}`;
+  oc.appendChild(hookBlock);
+
+  // 3. Audio
+  const audioBlock = document.createElement('div');
+  audioBlock.className = 'out-block';
+  audioBlock.style.borderColor = 'var(--red)';
+  audioBlock.innerHTML = `
+    <div class="out-label">Voiceover Audio</div>
+    <div class="audio-row">
+      <div class="audio-info">MP3 · en-US-GuyNeural · +15% speed</div>
+      <button class="action-btn" id="audioBtn" onclick="generateAudio()">Generate Audio →</button>
+    </div>
+    <div id="audioPlayerWrap"></div>`;
+  oc.appendChild(audioBlock);
+
+  // 4. Tagged Script
+  const scriptBlock = document.createElement('div');
+  scriptBlock.className = 'out-block';
+  const fullText = (data.sentences||[]).filter(s=>s.type!=='pause').map(s=>s.text).join(' ');
+  scriptBlock.innerHTML = `
+    <div class="out-label">Tagged Script — ${(data.sentences||[]).length} sentences
+      <button class="copy-btn" onclick="copyText(${JSON.stringify(fullText)}, this)">Copy All</button>
+    </div>
+    ${renderSentences(data.sentences || [])}`;
+  oc.appendChild(scriptBlock);
+
+  // 5. BGM
+  if (data.bgm_suggestion) {
+    const bgm = data.bgm_suggestion;
+    const pixUrl = `https://pixabay.com/music/search/?q=${encodeURIComponent(bgm.pixabay_query)}`;
+    const bgmBlock = document.createElement('div');
+    bgmBlock.className = 'out-block';
+    bgmBlock.innerHTML = `
+      <div class="out-label">BGM Suggestion</div>
+      <div class="bgm-wrap">
+        <div class="bgm-icon">🎵</div>
+        <div>
+          <div class="bgm-name">${esc(bgm.name)}</div>
+          <div class="bgm-mood">${esc(bgm.mood)}</div>
+          <div class="bgm-bpm">BPM ${esc(bgm.bpm)}</div>
+          <div class="bgm-vibe">${esc(bgm.vibe)}</div>
+        </div>
+        <a href="${pixUrl}" target="_blank" class="action-btn secondary" style="margin-left:auto;">🔍 Pixabay</a>
+      </div>`;
+    oc.appendChild(bgmBlock);
+  }
+
+  // 6. Photo Keywords
+  if ((data.photo_keywords||[]).length) {
+    const kwBlock = document.createElement('div');
+    kwBlock.className = 'out-block';
+    const kwHtml = data.photo_keywords.filter(Boolean).map(k =>
+      `<span class="kw-chip">${esc(k)}</span>`).join('');
+    kwBlock.innerHTML = `<div class="out-label">📸 Photo Keywords (Pexels)</div><div class="kw-wrap">${kwHtml}</div>`;
+    oc.appendChild(kwBlock);
+  }
+
+  // 7. Tags
+  if ((data.tags||[]).length) {
+    const tagsBlock = document.createElement('div');
+    tagsBlock.className = 'out-block';
+    const tagsHtml = data.tags.map(t =>
+      `<span class="tag-chip" onclick="copyText('#${t}', this)">#${esc(t)}</span>`).join('');
+    tagsBlock.innerHTML = `<div class="out-label">YouTube Tags <span style="color:var(--grey);font-size:9px">(click to copy)</span></div><div class="kw-wrap">${tagsHtml}</div>`;
+    oc.appendChild(tagsBlock);
+  }
+
+  // 8. Description
+  if (data.description) {
+    const descBlock = document.createElement('div');
+    descBlock.className = 'out-block';
+    descBlock.innerHTML = `
+      <div class="out-label">Description
+        <button class="copy-btn" onclick="copyText(${JSON.stringify(data.description)}, this)">Copy</button>
+      </div>
+      <pre style="font-size:11px;color:#555;line-height:1.8;white-space:pre-wrap;font-family:'Barlow',sans-serif;">${esc(data.description)}</pre>`;
+    oc.appendChild(descBlock);
+  }
+}
+
+// ── Generate script ──────────────────────────────────────────────────────────
 async function startGeneration() {
   const topic = document.getElementById('topicInput').value.trim();
   if (!topic) {
@@ -423,9 +667,9 @@ async function startGeneration() {
     setTimeout(() => document.getElementById('topicInput').style.borderColor = '', 2000);
     return;
   }
-  const contentType = document.querySelector('.tag.active')?.dataset.type || 'story';
-  const market = document.getElementById('marketSelect').value;
-  const notes = document.getElementById('notesInput').value;
+  const contentType = document.querySelector('#contentTags .tag.active')?.dataset.type || 'story';
+  const market      = document.getElementById('marketSelect').value;
+  const notes       = document.getElementById('notesInput').value;
 
   const btn = document.getElementById('generateBtn');
   btn.disabled = true; btn.textContent = 'Generating Script...';
@@ -433,6 +677,7 @@ async function startGeneration() {
   document.getElementById('placeholder').style.display = 'none';
   document.getElementById('outputContent').style.display = 'none';
   document.getElementById('shimmerLines').style.display = 'flex';
+  currentScript = '';
 
   try {
     const res = await fetch(`${BACKEND}/generate`, {
@@ -441,44 +686,23 @@ async function startGeneration() {
       body: JSON.stringify({ topic, content_type: contentType, niche: market, notes })
     });
     const data = await res.json();
-
     if (data.detail) throw new Error(data.detail);
 
-    currentScript = data.full_script || '';
+    currentScript = data.script || '';
 
     document.getElementById('shimmerLines').style.display = 'none';
-    document.getElementById('outputContent').style.display = 'flex';
-    document.getElementById('placeholder').style.display = 'none';
+    renderOutput(data);
 
-    document.getElementById('outTitle').textContent = data.title || '';
-    document.getElementById('outHook').textContent = data.hook || '';
-    document.getElementById('outScript').textContent = data.full_script || '';
-
-    // Keywords
-    const kwDiv = document.getElementById('outKeywords');
-    kwDiv.innerHTML = '';
-    (data.photo_keywords || []).forEach(kw => {
-      if (!kw) return;
-      const span = document.createElement('span');
-      span.style.cssText = 'font-family:"Barlow Condensed",sans-serif;font-size:11px;letter-spacing:1px;padding:4px 10px;border:1px solid #2a2a2a;color:#555;';
-      span.textContent = kw;
-      kwDiv.appendChild(span);
-    });
-
-    // Tags
-    document.getElementById('outTags').textContent = (data.tags || []).join(' · ');
-
-    // Meta
-    document.getElementById('metaScenes').textContent = (data.scenes || []).length;
-    document.getElementById('metaDuration').textContent = Math.round((data.scenes || []).length * 0.5) + 'M';
-    document.getElementById('metaStatus').textContent = 'Ready';
-
+    document.getElementById('metaScenes').textContent    = data.scenes_count   || '—';
+    document.getElementById('metaDuration').textContent  = data.duration        || '—';
+    document.getElementById('metaSentences').textContent = data.sentence_count  || '—';
+    document.getElementById('metaStatus').textContent    = 'Ready';
     setStatus('live', 'Ready');
 
   } catch (err) {
     document.getElementById('shimmerLines').style.display = 'none';
     document.getElementById('placeholder').style.display = 'block';
-    document.getElementById('placeholder').innerHTML = `<span style="color:var(--red)">Error: ${err.message}</span>`;
+    document.getElementById('placeholder').innerHTML = `<span style="color:var(--red)">Error: ${esc(err.message)}</span>`;
     setStatus('error', 'Error');
     document.getElementById('metaStatus').textContent = 'Error';
   }
@@ -487,30 +711,39 @@ async function startGeneration() {
   btn.textContent = 'Generate Script + Audio →';
 }
 
+// ── Generate audio ───────────────────────────────────────────────────────────
 async function generateAudio() {
   if (!currentScript) return;
   const btn = document.getElementById('audioBtn');
   btn.textContent = 'Generating...';
-  btn.style.opacity = '0.6';
+  btn.disabled = true;
 
   try {
     const res = await fetch(`${BACKEND}/audio`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: currentScript })
+      body: JSON.stringify({ script: currentScript })
     });
     const data = await res.json();
     if (data.audio_id) {
-      btn.textContent = 'Download MP3 →';
-      btn.style.opacity = '1';
-      btn.onclick = () => window.open(`${BACKEND}/audio/${data.audio_id}`, '_blank');
+      const audioUrl = `${BACKEND}/audio/${data.audio_id}`;
+      document.getElementById('audioPlayerWrap').innerHTML = `
+        <audio class="audio-player" controls src="${audioUrl}"></audio>
+        <a href="${audioUrl}" download="autodiscussion.mp3" class="action-btn secondary" style="margin-top:8px;display:inline-block;">⬇ Download MP3</a>`;
+      btn.textContent = '✓ Audio Ready';
+      btn.style.background = '#22c55e';
+      btn.style.color = '#000';
     }
   } catch (err) {
-    btn.textContent = 'Error — Try Again';
-    btn.style.opacity = '1';
+    btn.textContent = 'Error — Retry';
+    btn.disabled = false;
   }
 }
-document.getElementById('topicInput').addEventListener('keydown', e => { if (e.key === 'Enter') startGeneration(); });
+
+// Enter to generate
+document.getElementById('topicInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') startGeneration();
+});
 </script>
 </body>
 </html>
